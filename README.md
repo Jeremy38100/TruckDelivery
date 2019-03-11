@@ -43,4 +43,3 @@ Trouver des poids sur les contraintes
 ## Travail rendu
 - Code commenté
 - Tests (validation)
--
