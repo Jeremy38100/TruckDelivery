@@ -86,15 +86,31 @@ function getNextPointIndex(ride) {
   return minDistIndex;
 }
 
+function detourDistances() {
+
+}
+
+// TODO
+// Preprocess coordinates
+// for each point point A :
+//   for each point B :
+//     detour['distance'][A-B] = distance(A->B->entrepot) - distance(A->entrepot)
+//     temps['distance'][A-B] = temps(A->B->entrepot) - temps(A->entrepot)
+
 Promise.all([
     getCoords(),
     getDistances(),
     getTimes(),
     getOrders(),
     getVehicule()]).then(() => {
+  console.log('coords');
   console.log(coords);
+  console.log('distances');
   console.log(distances);
+  console.log('times');
   console.log(times);
+  console.log('orders');
   console.log(orders);
+  console.log('config');
   console.log(config);
 }).catch();

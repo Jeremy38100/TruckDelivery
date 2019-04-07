@@ -14,7 +14,10 @@ function getFile(fileName) {
 function getCoords() {
   return new Promise((resolve, reject) => {
     getFile(path + 'coords.txt').then(coordsFile => {
-      coordsFile.split('\n').forEach(xy => {coords.push(xy.split(',').map(Number))});
+      coordsFile.split('\n').forEach(xy => {
+        if (!xy) { return; }
+        coords.push(xy.split(',').map(Number))
+      });
       warehouseIndex = coordsFile.length - 1;
       resolve();
     }).catch();
@@ -36,11 +39,12 @@ function getDistances() {
   return new Promise((resolve, reject) => {
     getFile(path + 'distances.txt').then(distancesFile => {
       distancesFile.split('\n').forEach(line => {
+        if (!line) { return; }
         distancesLine = [];
         line.split(' ').forEach(distance => {
-          if (distance.length > 0) {
+          // if (distance.length > 0) {
             distancesLine.push(Number(distance));
-          }
+          // }
         });
         distances.push(distancesLine);
       });
@@ -53,6 +57,7 @@ function getTimes() {
   return new Promise((resolve, reject) => {
     getFile(path + 'times.txt').then(timesFile => {
       timesFile.split('\n').forEach(line => {
+        if (!line) { return; }
         timesLine = [];
         line.split(' ').forEach(time => {
           if (time.length > 0) {
