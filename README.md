@@ -62,3 +62,12 @@ Fichier .txt
 
 C = chargement des paquets : entrepots
 R = Recharge ou Recharge et Chargement
+
+## Fonction de calcul de résultat
++ distanceTotal // km
++ (dureeTotale / 600) // s
++ ((nbVehicule - 1) * 500)
++ (nbViolContrainteDistance * 50000)
++ (nbViolContrainteQuantite * 10000)
++ (nbViolContrainteDuration * 1000)
++ ((nbMissingVisits + nbMultipleVisit) * 100000);
