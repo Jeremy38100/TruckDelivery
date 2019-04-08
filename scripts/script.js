@@ -12,6 +12,9 @@ config = {};
 //
 remainingIndexes = [];
 
+//
+rides = [];
+
 // Enum
 Limit = {
   "duration": "DURATION",
@@ -21,12 +24,21 @@ Limit = {
 // Class
 class Ride {
   constructor() {
-    this.clientsIndex = [];
+    this.clientsIndex = [0];
     this.cumulativeDistance = 0;
     this.cumulativeBags = 0;
     this.cumulativeTime = 0;
     this.remainingDistance = config.max_dist;
     this.limit = "";
+
+    let nextIndex = -1;
+    do {
+      nextIndex = this.getNextPointIndex();
+      if (nextIndex > -1) {
+        console.log(nextIndex);
+        this.addPoint(nextIndex);
+      }
+    } while (nextIndex > -1 && remainingIndexes.length > 0);
   }
 
   getLastIndex() {
@@ -38,59 +50,72 @@ class Ride {
   }
 
   addPoint(newIndex) {
-    this.clientsIndex.push(newIndex);
 
     // Get last truck position
     const lastIndex = this.getLastIndex();
-    const distanceNewPoint = distances[lastIndex, newIndex];
+
     // Update cumulative data
+    const distanceNewPoint = distances[lastIndex][newIndex]
     this.cumulativeDistance += distanceNewPoint;
-    this.cumulativeTime += times[lastIndex, newIndex];
-    this.cumulativeBags += orders[newIndex];
+    this.cumulativeTime += times[lastIndex][newIndex];
+    this.cumulativeBags += orders[newIndex - 1];
     this.remainingDistance -= distanceNewPoint;
+
+    remainingIndexes = remainingIndexes.filter(el => { return el !== newIndex; })
+
+    this.clientsIndex.push(newIndex);
   }
 
   cantNextPoint(newPointIndex) {
-    if (this.cumulativeBags + orders[newPointIndex] > config.capacity) {
+    // Pas de surcharge
+    if (this.cumulativeBags + orders[newPointIndex - 1] > config.capacity) {
       return Limit.capacity;
     }
 
     const lastIndex = this.getLastIndex();
-    const distanceToPointAndHome = distances[lastIndex, newIndex] + distances[newIndex, warehouseIndex];
-    const timeToPointAndHome = times[lastIndex, newIndex] + times[newIndex, warehouseIndex];
+    const distanceToPointAndHome = distances[lastIndex, newPointIndex] + distances[newPointIndex, warehouseIndex];
+    const timeToPointAndHome = times[lastIndex, newPointIndex] + times[newPointIndex, warehouseIndex];
 
+    // Pas de batterie vide
     if (this.cumulativeDistance + distanceToPointAndHome > config.max_dist) {
       return Limit.distance;
     }
+    // Pas d'heure sup
     if (this.cumulativeTime + timeToPointAndHome > config.max_time) {
       return Limit.duration;
     }
     return '';
   }
+
+  getNextPointIndex() {
+    let minDistIndex = -1;
+    let minDistValue = -1;
+    remainingIndexes.forEach(index => {
+      const reason = this.cantNextPoint(index);
+      if (!reason) {
+        const distanceToLastPoint = distances[this.getLastIndex()][index];
+        if (minDistIndex == -1 || distanceToLastPoint < minDistValue) { 
+          minDistIndex = index;
+          minDistValue = distanceToLastPoint;
+        }
+      } else {
+        console.log(index + ': ' + reason);
+        return -1;
+      }
+    });
+    return minDistIndex;
+  }
 }
 
-function getNextPointIndex(ride) {
-  let minDistIndex = -1;
-  let minDistValue = -1;
-  remainingIndexes.forEach(index => {
-    const reason = ride.cantNextPoint(index);
-    if (!reason) {
-      if (index == -1) { minDistIndex = index}
-      const distanceToLastPoint = distances[ride.getLastIndex(), index];
-      if (distanceToLastPoint < minDistValue) {
-        minDistIndex = index;
-        minDistValue = distanceToLastPoint;
+// n^2
+function preprocessDetour() {
+  for (let index in coords) {
+    for (let index2 in coords) {
+      if (index !== index2) {
       }
     }
-  });
-  return minDistIndex;
+  }
 }
-
-function detourDistances() {
-
-}
-
-// TODO
 // Preprocess coordinates
 // for each point point A :
 //   for each point B :
@@ -113,4 +138,26 @@ Promise.all([
   console.log(orders);
   console.log('config');
   console.log(config);
+
+  for (i in coords) {
+    if (i > 0) { remainingIndexes.push(Number(i)); }
+  }
+
+  do {
+    rides.push(new Ride());
+    console.log(remainingIndexes);
+
+  } while (remainingIndexes.length > 0);
 }).catch();
+
+
+function evaluation() {
+  return 0
+    + distanceTotal // km
+    + (dureeTotale / 600) // s
+    + ((nbVehicule - 1) * 500)
+    + (nbViolContrainteDistance * 50000)
+    + (nbViolContrainteQuantite * 10000)
+    + (nbViolContrainteDuration * 1000)
+    + ((nbMissingVisits + nbMultipleVisit) * 100000);
+}

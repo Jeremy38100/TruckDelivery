@@ -42,9 +42,9 @@ function getDistances() {
         if (!line) { return; }
         distancesLine = [];
         line.split(' ').forEach(distance => {
-          // if (distance.length > 0) {
+          if (distance.length > 0) {
             distancesLine.push(Number(distance));
-          // }
+          }
         });
         distances.push(distancesLine);
       });

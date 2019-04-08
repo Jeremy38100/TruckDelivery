@@ -52,3 +52,13 @@ A la racine du projet lancer un **webserver** (par exemple avec Pyhton : `python
 Se rendre sur un **navigateur Web** à l'adresse : `localhost:8000`
 
 Ouvrir la console développeur du navigateur web pour voir les logs.
+
+# Export
+
+Fichier .txt
+
+2,4,C,5,R,12   // Vehicule 1
+6,3         // Vehicule 2
+
+C = chargement des paquets : entrepots
+R = Recharge ou Recharge et Chargement
