@@ -1,6 +1,18 @@
+let colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
+      '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
+      '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A',
+      '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
+      '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC',
+      '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
+      '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680',
+      '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
+      '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
+      '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'];
+let colorIndex = 0;
+
 class Ride {
-  constructor(remainingIndexes) {
-    this.clientsIndex = [remainingIndexes.length - 1];
+  constructor(remainingIndexes, depotIndex) {
+    this.clientsIndex = [depotIndex];
     this.cumulativeDistance = 0;
     this.cumulativeBags = 0;
     this.cumulativeTime = 0;
@@ -18,11 +30,7 @@ class Ride {
   }
 
   getLastIndex() {
-    let lastIndex = warehouseIndex;
-    if (this.clientsIndex.length > 0) {
-      lastIndex = this.clientsIndex[this.clientsIndex.length - 1];
-    }
-    return lastIndex;
+    return this.clientsIndex[this.clientsIndex.length - 1];
   }
 
   addPoint(newIndex) {
@@ -34,7 +42,7 @@ class Ride {
     const distanceNewPoint = distances[lastIndex][newIndex]
     this.cumulativeDistance += distanceNewPoint;
     this.cumulativeTime += times[lastIndex][newIndex];
-    this.cumulativeBags += orders[newIndex - 1];
+    this.cumulativeBags += orders[newIndex];
     this.remainingDistance -= distanceNewPoint;
 
     this.remainingIndexes = this.remainingIndexes.filter(el => { return el !== newIndex; })
@@ -44,7 +52,7 @@ class Ride {
 
   cantNextPoint(newPointIndex) {
     // Pas de surcharge
-    if (this.cumulativeBags + orders[newPointIndex - 1] > config.capacity) {
+    if (this.cumulativeBags + orders[newPointIndex] > config.capacity) {
       return Limit.capacity;
     }
 
@@ -85,6 +93,28 @@ class Ride {
     return time;
   }
 
+  bags() {
+    let bags = 0;
+    this.clientsIndex.forEach((clientIndex, i, arr) => {
+      if(i > 0 && i < arr.length - 1) {
+        bags += orders[clientIndex];
+      }
+    });
+    return bags;
+  }
+
   static calculate(remainingIndexes) {
   }
+
+  drawOnMap() {
+    let latlngs = this.clientsIndex.map(index => {
+      return coords[index];
+    })
+    let polyline = L.polyline(latlngs, {
+      color: colorArray[colorIndex],
+      opacity: 1
+    }).addTo(map);
+    colorIndex++;
+  }
+
 }

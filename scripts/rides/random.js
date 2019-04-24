@@ -12,6 +12,7 @@ class RandomRide extends Ride {
       remainingIndexes = remainingIndexes.filter(index => {
         return !visitedIndexes.includes(index);
       });
+
     } while (remainingIndexes.length > 0);
     console.log('----------------');
     console.log('RandomRide');

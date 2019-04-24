@@ -1,5 +1,5 @@
 class MinDistRide extends Ride {
-  constructor(remainingIndexes) { super(remainingIndexes); }
+  constructor(remainingIndexes, depotIndex) { super(remainingIndexes, depotIndex); }
 
   getNextPointIndex() {
     let minDistIndex = -1;
@@ -19,15 +19,20 @@ class MinDistRide extends Ride {
     return minDistIndex;
   }
 
-  static calculate(remainingIndexes) {
+  static calculate(remainingIndexes, depotIndex) {
     let rides = [];
     do {
-      rides.push(new MinDistRide(remainingIndexes));
+      const ride = new MinDistRide(remainingIndexes, depotIndex);
+      ride.clientsIndex.push(depotIndex);
+      rides.push(ride);
       const visitedIndexes = rides[rides.length - 1].clientsIndex;
       remainingIndexes = remainingIndexes.filter(index => {
         return !visitedIndexes.includes(index);
       });
     } while (remainingIndexes.length > 0);
+    rides.forEach(ride => {
+      ride.drawOnMap()
+    });
     console.log('----------------');
     console.log('MinDistRide');
     console.log(rides);
