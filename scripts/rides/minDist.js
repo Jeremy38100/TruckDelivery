@@ -30,13 +30,11 @@ class MinDistRide extends Ride {
         return !visitedIndexes.includes(index);
       });
     } while (remainingIndexes.length > 0);
-    rides.forEach(ride => {
-      ride.drawOnMap()
-    });
     console.log('----------------');
     console.log('MinDistRide');
     console.log(rides);
     console.log(evaluation(rides));
     console.log('----------------');
+    return rides;
   }
 }

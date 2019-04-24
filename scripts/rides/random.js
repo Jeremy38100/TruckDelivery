@@ -6,6 +6,7 @@ class RandomRide extends Ride {
   }
 
   static calculate(remainingIndexes) {
+    let rides = [];
     do {
       rides.push(new RandomRide(remainingIndexes));
       const visitedIndexes = rides[rides.length - 1].clientsIndex;
@@ -19,5 +20,6 @@ class RandomRide extends Ride {
     console.log(rides);
     console.log(evaluation(rides));
     console.log('----------------');
+    return rides;
   }
 }

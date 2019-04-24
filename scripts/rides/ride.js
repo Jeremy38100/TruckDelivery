@@ -53,7 +53,8 @@ class Ride {
   cantNextPoint(newPointIndex) {
     // Pas de surcharge
     if (this.cumulativeBags + orders[newPointIndex] > config.capacity) {
-      return Limit.capacity;
+      this.limit = Limit.capacity;
+      return this.limit;
     }
 
     const lastIndex = this.getLastIndex();
@@ -62,11 +63,13 @@ class Ride {
 
     // Pas de batterie vide
     if (this.cumulativeDistance + distanceToPointAndHome > config.max_dist) {
-      return Limit.distance;
+      this.limit = Limit.distance;
+      return this.limit;
     }
     // Pas d'heure sup
     if (this.cumulativeTime + timeToPointAndHome > config.max_time) {
-      return Limit.duration;
+      this.limit = Limit.duration;
+      return this.limit;
     }
     return '';
   }
@@ -106,15 +109,60 @@ class Ride {
   static calculate(remainingIndexes) {
   }
 
-  drawOnMap() {
-    let latlngs = this.clientsIndex.map(index => {
-      return coords[index];
+  drawOnMap(index) {
+    let latlngs = this.clientsIndex.map(i => {
+      return coords[i];
     })
     let polyline = L.polyline(latlngs, {
-      color: colorArray[colorIndex],
+      color: colorArray[index],
       opacity: 1
     }).addTo(map);
-    colorIndex++;
+  }
+
+  appendToTable(index) {
+    const tableBody = $('#tableBody');
+    tableBody.append(`
+    <tr>
+      <td><span class="badge" style="background-color: ${colorArray[index]}">&nbsp;&nbsp;&nbsp;</span> ${index}</td>
+      <td>${this.cumulativeDistance.toFixed(2)}</td>
+      <td>${this.cumulativeBags}</td>
+      <td>${this.cumulativeTime}</td>
+      <td>${this.remainingDistance.toFixed(2)}</td>
+      <td>${this.limit}</td>
+      <td>${this.getOrdersHtml(index)}</td>
+    </tr>`);
+  }
+
+  getOrdersHtml(index) {
+     let html =`
+    <div id="accordion"
+      <div class="card">
+        <div class="card-header p-0" id="heading-${index}">
+          <h5 class="mb-0">
+            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-${index}" aria-expanded="true" aria-controls="collapse-${index}">
+              ${this.clientsIndex.length - 2} clients
+            </button>
+          </h5>
+        </div>
+
+        <div id="collapse-${index}" class="collapse" aria-labelledby="heading-${index}" data-parent="#accordion">
+          <div class="card-body p-0">
+            <ul>
+    `
+    this.clientsIndex.forEach((clientIndex, index, array) => {
+      if (index == 0 || index == array.length - 1) return;
+      html += `
+      <li># ${clientIndex} - ${orders[clientIndex]}</li>
+      `;
+    });
+    html += `
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    `;
+    return html;
   }
 
 }
