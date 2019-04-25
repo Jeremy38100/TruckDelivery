@@ -74,12 +74,16 @@ function getTimes() {
 function getVehicule() {
   return new Promise((resolve, reject) => {
     getFile(path + 'vehicle.ini').then(data => {
-      console.log(data.replace(/ /g,'').split('\n').forEach(conf => {
+      data.replace(/ /g,'').split('\n').forEach(conf => {
         const keyValue = conf.split('=');
         if (keyValue.length != 2) { return; }
         config[keyValue[0]] = JSON.parse(keyValue[1]);
-      }));
-      // TODO calculate max_time
+      });
+      if (!config.end_time || !config.start_time) reject('missing config time');
+      const endStartSplit = [config.end_time, config.start_time].map(time => time.split(':'));
+      const endSec = endStartSplit[0][0] * (60*60) + endStartSplit[0][1] * (60);
+      const startSec = endStartSplit[1][0] * (60*60) + endStartSplit[1][1] * (60);
+      config.maxDuration = endSec - startSec;
       resolve();
     }).catch();
   });
