@@ -11,55 +11,66 @@ let colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
 let colorIndex = 0;
 
 class Ride {
-  constructor(remainingIndexes, depotIndex) {
-    this.clientsIndex = [depotIndex];
+  constructor(remainingOrders) {
+    this.orders = [];
+    this.pointsIndex = [warehouseIndex];
+
     this.cumulativeDistance = 0;
     this.cumulativeBags = 0;
     this.cumulativeTime = 0;
+
     this.remainingDistance = config.max_dist;
     this.limit = "";
-    this.remainingIndexes = remainingIndexes
 
-    let nextIndex = -1;
+    let nextOrder = null;
     do {
-      nextIndex = this.getNextPointIndex();
-      if (nextIndex > -1) {
-        this.addPoint(nextIndex);
+      nextOrder = this.getNextOrder(remainingOrders);
+      if (nextOrder) {
+        this.addOrder(nextOrder, remainingOrders);
+        const orderIndex = remainingOrders.findIndex(order => {
+          return order.clientIndex == nextOrder.clientIndex;
+        });
+        if (orderIndex >= 0) remainingOrders.splice(orderIndex, 1);
       }
-    } while (nextIndex > -1 && this.remainingIndexes.length > 0);
+    } while (nextOrder && remainingOrders.length > 0);
   }
 
   getLastIndex() {
-    return this.clientsIndex[this.clientsIndex.length - 1];
+    return this.pointsIndex[this.pointsIndex.length - 1];
   }
 
   addPoint(newIndex) {
-
-    // Get last truck position
     const lastIndex = this.getLastIndex();
 
-    // Update cumulative data
+    this.cumulativeTime += times[lastIndex][newIndex];
+
     const distanceNewPoint = distances[lastIndex][newIndex]
     this.cumulativeDistance += distanceNewPoint;
-    this.cumulativeTime += times[lastIndex][newIndex];
-    this.cumulativeBags += orders[newIndex];
     this.remainingDistance -= distanceNewPoint;
 
-    this.remainingIndexes = this.remainingIndexes.filter(el => { return el !== newIndex; })
-
-    this.clientsIndex.push(newIndex);
+    this.pointsIndex.push(newIndex);
   }
 
-  cantNextPoint(newPointIndex) {
+  addOrder(order) {
+    const orderIndex = order.clientIndex;
+    addPoint(orderIndex);
+
+    this.cumulativeBags += order.order;
+    this.cumulativeTime += order.orderDuration
+    this.orders.push(order);
+  }
+
+  cantNextOrder(order) {
     // Pas de surcharge
-    if (this.cumulativeBags + orders[newPointIndex] > config.capacity) {
+    const orderIndex = order.clientIndex;
+    if (this.cumulativeBags + order.order > config.capacity) {
       this.limit = Limit.capacity;
       return this.limit;
     }
 
     const lastIndex = this.getLastIndex();
-    const distanceToPointAndHome = distances[lastIndex, newPointIndex] + distances[newPointIndex, warehouseIndex];
-    const timeToPointAndHome = times[lastIndex, newPointIndex] + times[newPointIndex, warehouseIndex];
+    const distanceToPointAndHome = distances[lastIndex, orderIndex] + distanceToWarehouse;
+    const timeToPointAndHome = times[lastIndex, orderIndex] + durationToWarehouse;
 
     // Pas de batterie vide
     if (this.cumulativeDistance + distanceToPointAndHome > config.max_dist) {
@@ -74,15 +85,16 @@ class Ride {
     return '';
   }
 
-  getNextPointIndex() {
-    return -1;
+  getNextOrder(remainingOrders) {
+    return null;
   }
 
   distance() {
     let distance = 0;
     const clientsLength = this.clientsIndex.length;
-    for (let index = 0; index < clientsLength - 1; index++) {
-      distance += distances[index][index + 1];
+    if (clientsLength < 2) console.error("clientsLength < 2");
+    for (let index = 1; index < clientsLength; index++) {
+      distance += distances[index - 1][index];
     }
     return distance;
   }
@@ -90,8 +102,12 @@ class Ride {
   time() {
     let time = 0;
     const clientsLength = this.clientsIndex.length;
-    for (let index = 0; index < clientsLength - 1; index++) {
-      time += times[this.clientsIndex[index]][this.clientsIndex[index + 1]];
+    if (clientsLength < 2) console.error("clientsLength < 2");
+    for (let index = 1; index < clientsLength; index++) {
+      time += times[this.clientsIndex[index-1]][this.clientsIndex[index]];
+      if (index < clientIndex - 1) {
+        // TODO + delivery time (constant + forEach bag)
+      }
     }
     return time;
   }
@@ -100,7 +116,7 @@ class Ride {
     let bags = 0;
     this.clientsIndex.forEach((clientIndex, i, arr) => {
       if(i > 0 && i < arr.length - 1) {
-        bags += orders[clientIndex];
+        bags += ordersDetail[clientIndex];
       }
     });
     return bags;
@@ -147,12 +163,12 @@ class Ride {
 
         <div id="collapse-${index}" class="collapse" aria-labelledby="heading-${index}" data-parent="#accordion">
           <div class="card-body p-0">
-            <ul>
+            <ul class="list-group list-group-flush">
     `
     this.clientsIndex.forEach((clientIndex, index, array) => {
       if (index == 0 || index == array.length - 1) return;
       html += `
-      <li># ${clientIndex} - ${orders[clientIndex]}</li>
+      <li class="list-group-item"><i class="fa fa-user"></i> #${clientIndex} - ${ordersDetail[clientIndex]} <i class="fa fa-suitcase"></i></li>
       `;
     });
     html += `

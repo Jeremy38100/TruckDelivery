@@ -1,22 +1,23 @@
 class MinDistRide extends Ride {
   constructor(remainingIndexes, depotIndex) { super(remainingIndexes, depotIndex); }
 
-  getNextPointIndex() {
-    let minDistIndex = -1;
+  getNextOrder(remainingOrders) {
+    let minDistOrder = null;
     let minDistValue = -1;
-    this.remainingIndexes.forEach(index => {
-      const reason = this.cantNextPoint(index);
+    remainingOrders.forEach(order => {
+      const reason = this.cantNextOrder(order);
       if (!reason) {
-        const distanceToLastPoint = distances[this.getLastIndex()][index];
-        if (minDistIndex == -1 || distanceToLastPoint < minDistValue) { 
-          minDistIndex = index;
+        const orderIndex = order.clientIndex;
+        const distanceToLastPoint = distances[this.getLastIndex()][orderIndex];
+        if (minDistOrder == null || distanceToLastPoint < minDistValue) { 
+          minDistOrder = order;
           minDistValue = distanceToLastPoint;
         }
       } else {
-        return -1;
+        return null;
       }
     });
-    return minDistIndex;
+    return minDistOrder;
   }
 
   static calculate(remainingIndexes, depotIndex) {

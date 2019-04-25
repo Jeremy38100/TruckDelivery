@@ -28,7 +28,7 @@ function getOrders() {
   return new Promise((resolve, reject) => {
     getFile(path + 'demandes.txt').then(ordersFile => {
       ordersFile.split('\n').forEach(order => {
-        if (order) { orders.push(Number(order)); }
+        if (order) { ordersDetail.push(Number(order)); }
       });
       resolve();
     }).catch();

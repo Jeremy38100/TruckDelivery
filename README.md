@@ -71,3 +71,14 @@ R = Recharge ou Recharge et Chargement
 + (nbViolContrainteQuantite * 10000)
 + (nbViolContrainteDuration * 1000)
 + ((nbMissingVisits + nbMultipleVisit) * 100000);
+
+# Files structure
+* `/css` : contains stylsheets files
+* `/dist` : contains WebApp dependencies (Map integration, markers ...)
+* `/examples` : contains data examples
+  * `example` : contains a single example
+    * `coords.txt` : warehouse is the last one
+    * `demandes.txt`
+    * `distances.txt`
+    * `times.txt`
+    * `vehicle.txt`

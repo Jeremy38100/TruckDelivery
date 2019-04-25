@@ -3,6 +3,7 @@ const path = 'examples/example_2/';
 // input
 coords = [];
 distances = [];
+ordersDetail = [];
 orders = [];
 times = [];
 warehouseIndex = 0;
@@ -39,37 +40,40 @@ function init () {
       getDistances(),
       getTimes(),
       getOrders(),
-      getVehicule()]).then(() => {
+      getVehicule()
+    ]).then(() => {
       console.log('coords');
       console.log(coords);
       console.log('distances');
       console.log(distances);
       console.log('times');
       console.log(times);
-      console.log('orders');
-      console.log(orders);
+      console.log('ordersDetail');
+      console.log(ordersDetail);
       console.log('config');
       console.log(config);
 
-    coords.forEach((e, i) => {
-      if (i !== coords.length - 1) {
-        indexes.push(Number(i));
-      }
-    });
+      coords.forEach((e, i) => {
+        if (i !== coords.length - 1) {
+          indexes.push(Number(i));
+        }
+      });
 
-    const entrepotIndex = indexes.length;
-    const ride = MinDistRide;
-    const rides = ride.calculate(indexes.slice(0, indexes.length - 1), entrepotIndex);
-    // IterativeRide.calculate(indexes.slice(0));
-    // MinDistRide.calculate(indexes.slice(0));
-    rides.forEach((ride, index) => {
-      ride.drawOnMap(index);
-      ride.appendToTable(index);
-    });
-    $('#nbRides').text(rides.length);
-    draw(map, coords);
+      ordersDetail.forEach((order, index) => {
+        orders.push(new Order(index));
+      })
 
-  }).catch();
+      const ride = MinDistRide;
+      const rides = ride.calculate(indexes.slice(0, indexes.length - 1), warehouseIndex);
+      // IterativeRide.calculate(indexes.slice(0));
+      // MinDistRide.calculate(indexes.slice(0));
+      rides.forEach((ride, index) => {
+        ride.drawOnMap(index);
+        ride.appendToTable(index);
+      });
+      $('#nbRides').text(rides.length);
+      draw(map, coords);
+    }).catch();
 }
 
 function draw(map, allCoords) {
@@ -102,4 +106,11 @@ function evaluation(rides) {
   }
   result += rides.length;
   return result;
+//   + distanceTotal // km
+// + (dureeTotale / 600) // s
+// + ((nbVehicule - 1) * 500)
+// + (nbViolContrainteDistance * 50000)
+// + (nbViolContrainteQuantite * 10000)
+// + (nbViolContrainteDuration * 1000)
+// + ((nbMissingVisits + nbMultipleVisit) * 100000);
 }
