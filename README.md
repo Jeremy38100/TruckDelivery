@@ -55,13 +55,15 @@ Ouvrir la console développeur du navigateur web pour voir les logs.
 
 # Export
 
-Fichier .txt
+Fichier `.txt`
 
+```
 2,4,C,5,R,12   // Vehicule 1
 6,3         // Vehicule 2
+```
 
-C = chargement des paquets : entrepots
-R = Recharge ou Recharge et Chargement
+* C = Chargement des paquets : entrepots
+* R = Recharge ou Recharge et Chargement
 
 ## Fonction de calcul de résultat
 
