@@ -20,7 +20,7 @@ class Schedule {
       }
       truckSchedule.addRide(ride);
       // TODO if an order can't be processed
-      // ride.drawOnMap();
+      ride.drawOnMap();
       rideIndex++;
     }
     this.truckSchedules.push(truckSchedule);
