@@ -19,23 +19,4 @@ class MinDistRide extends Ride {
     });
     return minDistOrder;
   }
-
-  static calculate(remainingIndexes, depotIndex) {
-    let rides = [];
-    do {
-      const ride = new MinDistRide(remainingIndexes, depotIndex);
-      ride.clientsIndex.push(depotIndex);
-      rides.push(ride);
-      const visitedIndexes = rides[rides.length - 1].clientsIndex;
-      remainingIndexes = remainingIndexes.filter(index => {
-        return !visitedIndexes.includes(index);
-      });
-    } while (remainingIndexes.length > 0);
-    console.log('----------------');
-    console.log('MinDistRide');
-    console.log(rides);
-    console.log(evaluation(rides));
-    console.log('----------------');
-    return rides;
-  }
 }

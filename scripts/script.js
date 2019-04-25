@@ -59,33 +59,41 @@ function init () {
         }
       });
 
-      ordersDetail.forEach((order, index) => {
-        orders.push(new Order(index));
+      ordersDetail.forEach((order_, index) => {
+        const order = new Order(index);
+        orders.push(order);
+        order.drawOnMap();
       })
+      console.log(orders);
 
-      const ride = MinDistRide;
-      const rides = ride.calculate(indexes.slice(0, indexes.length - 1), warehouseIndex);
+      // const ride = MinDistRide;
+      // const rides = ride.calculate(indexes.slice(0, indexes.length - 1), warehouseIndex);
       // IterativeRide.calculate(indexes.slice(0));
       // MinDistRide.calculate(indexes.slice(0));
-      rides.forEach((ride, index) => {
-        ride.drawOnMap(index);
-        ride.appendToTable(index);
-      });
-      $('#nbRides').text(rides.length);
+      // rides.forEach((ride, index) => {
+      //   ride.drawOnMap(index);
+      //   ride.appendToTable(index);
+      // });
+      // $('#nbRides').text(rides.length);
       draw(map, coords);
+      schedule_ = new Schedule(orders);
+      schedule_.displayHtml();
+      console.log(schedule_.getScore());
+
     }).catch();
 }
+schedule_;
 
 function draw(map, allCoords) {
-  for (let i =0; i < allCoords.length - 1; i++) {
-    const coords = allCoords[i];
-    let marker = L.marker(coords, {icon: L.AwesomeMarkers.icon({
-      icon: 'user',
-      prefix: 'fa',
-      markerColor: 'blue',
-      iconColor: '#0000A0'
-    }) }).addTo(map).bindPopup(`# ${i} test`);
-  }
+  // for (let i =0; i < allCoords.length - 1; i++) {
+  //   const coords = allCoords[i];
+  //   let marker = L.marker(coords, {icon: L.AwesomeMarkers.icon({
+  //     icon: 'user',
+  //     prefix: 'fa',
+  //     markerColor: 'blue',
+  //     iconColor: '#0000A0'
+  //   }) }).addTo(map).bindPopup(`# ${i}: ${} <i class="fas fa-shopping-basket"></i>`);
+  // }
   // // entrepot
   const entrepotCoords = allCoords[allCoords.length - 1];
   let marker = L.marker(entrepotCoords, {icon: L.AwesomeMarkers.icon({
