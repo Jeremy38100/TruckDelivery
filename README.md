@@ -64,6 +64,8 @@ C = chargement des paquets : entrepots
 R = Recharge ou Recharge et Chargement
 
 ## Fonction de calcul de résultat
+
+```
 + distanceTotal // km
 + (dureeTotale / 600) // s
 + ((nbVehicule - 1) * 500)
@@ -71,6 +73,7 @@ R = Recharge ou Recharge et Chargement
 + (nbViolContrainteQuantite * 10000)
 + (nbViolContrainteDuration * 1000)
 + ((nbMissingVisits + nbMultipleVisit) * 100000);
+```
 
 # Files structure
 * `/css` : contains stylsheets files
