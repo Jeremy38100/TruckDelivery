@@ -120,7 +120,7 @@ class Order {
 A Ride is a list of orders the driver can process without coming back to warehouse
 
 ```typescript
-class Order {
+class Ride {
     rideIndex: number,
     orders: Order[], // orders to delivery in this ride
     pointsIndex: number[] // all coords of the ride (start and end with warehouse coords)
