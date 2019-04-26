@@ -22,7 +22,7 @@ Master 2 MIAGE - Université Grenoble Alpes - Option Energie
 - 🚚 ne peut pas parcourir une distance supérieur à `max_dist` avant une recharge
 - 🚚 ne peut pas partir du dépot avant `start_time`
 - 🚚 ne peut pas s'arreter moins de `temps_de_recharge` secondes lors d'une pause recharge
-- 📦les commandes ne sont pas divisés dans plusieurs camions
+- 📦 les commandes ne sont pas divisés dans plusieurs camions
 - 👥 tous les clients sont livrés
 
 ### Fonction objectif
@@ -55,11 +55,13 @@ Ouvrir la console développeur du navigateur web pour voir les logs.
 
 # Export
 
+>  ❗ Not yet available
+
 Fichier `.txt`
 
 ```
-2,4,C,5,R,12   // Vehicule 1
-6,3         // Vehicule 2
+2, 4, C, 5, R, 12 // Vehicule 1
+6, 3              // Vehicule 2
 ```
 
 * C = Chargement des paquets : entrepots
@@ -67,7 +69,7 @@ Fichier `.txt`
 
 ## Fonction de calcul de résultat
 
-```
+```{javascript}
 + distanceTotal // km
 + (dureeTotale / 600) // s
 + ((nbVehicule - 1) * 500)
@@ -78,7 +80,6 @@ Fichier `.txt`
 ```
 
 # Files structure
-* `/css` : contains stylsheets files
 * `/dist` : contains WebApp dependencies (Map integration, markers ...)
 * `/examples` : contains data examples
   * `example` : contains a single example
@@ -87,3 +88,61 @@ Fichier `.txt`
     * `distances.txt`
     * `times.txt`
     * `vehicle.txt`
+* `/scripts` : contains app logic
+    * `map.js`
+    * `script.js`
+    * `utils.js`
+    * `/neighborhood` :
+      * `Neighborhood.js` : abstract class describing a Neighborhood process
+    * `/schedule`
+      * `/ride`
+        * `Ride.js` : abstract class describing a Ride
+      * `/truckSchedule`
+          * `TruckSchedule.js`
+      * `Order.js`
+* `index.html` : contains main HTML code
+
+# Data Structure
+
+### Order
+
+```typescript
+class Order {
+    clientIndex: number,
+    order: number, // number of bags in the order
+    coords: [number, number],
+    duration: number // duration to delivery the order
+}
+```
+
+### 🚚 Ride
+
+A Ride is a list of orders the driver can process without coming back to warehouse
+
+```typescript
+class Order {
+    rideIndex: number,
+    orders: Order[], // orders to delivery in this ride
+    pointsIndex: number[] // all coords of the ride (start and end with warehouse coords)
+}
+```
+
+### 🚚 🗒 TruckSchedule
+
+A truck schedule is the list of rides the driver have to process
+
+```typescript
+class TruckSchedule {
+    rides: Ride[],
+}
+```
+
+### 📋 Schedule
+
+A Schedule is the daily planning of all drivers
+
+```typescript
+class Schedule {
+    truckSchedules: TruckSchedule[],
+}
+```

@@ -7,3 +7,14 @@ window.onload = function(){
   }).addTo(map);
   init();
 }
+
+function drawWarehouseOnMap() {
+  const warehouseCoords = coords[coords.length - 1];
+  const marker = L.marker(warehouseCoords, {icon: L.AwesomeMarkers.icon({
+    icon: 'archive',
+    prefix: 'fa',
+    markerColor: 'red',
+    iconColor: '#8b0000'
+  }) }).addTo(map);
+  map.panTo(new L.LatLng(warehouseCoords[0], warehouseCoords[1]));
+}
