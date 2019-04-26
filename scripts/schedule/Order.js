@@ -2,13 +2,13 @@ const singleBagDuration = 5;
 const orderDuration = 10;
 
 class Order {
-  constructor(orderIndex) {
+  constructor(orderIndex, example) {
     this.clientIndex = orderIndex;
-    this.order = ordersDetail[orderIndex];
-    this.coords = coords[orderIndex];
+    this.order = example.ordersCount[orderIndex];
+    this.coords = example.coords[orderIndex];
     this.orderDuration = this.order * singleBagDuration * orderDuration;
-    this.distanceToWarehouse = distances[orderIndex][warehouseIndex];
-    this.durationToWarehouse = times[orderIndex][warehouseIndex];
+    this.distanceToWarehouse = example.distances[orderIndex][example.warehouseIndex];
+    this.durationToWarehouse = example.times[orderIndex][example.warehouseIndex];
   }
 
   drawOnMap() {

@@ -9,6 +9,8 @@ colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
       '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
       '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'];
 
+const path = '/examples/'
+
 function getFile(fileName) {
   return new Promise((resolve, reject) => {
       var xhttp = new XMLHttpRequest();
@@ -22,33 +24,33 @@ function getFile(fileName) {
   })
 }
 
-function getCoords() {
+function getCoords(example) {
   return new Promise((resolve, reject) => {
-    getFile(path + 'coords.txt').then(coordsFile => {
+    getFile(path + example.name + '/coords.txt').then(coordsFile => {
       coordsFile.split('\n').forEach(xy => {
         if (!xy) { return; }
-        coords.push(xy.split(',').map(Number))
+        example.coords.push(xy.split(',').map(Number))
       });
-      warehouseIndex = coords.length - 1;
+      example.warehouseIndex = example.coords.length - 1;
       resolve();
     }).catch();
   });
 }
 
-function getOrders() {
+function getOrders(example) {
   return new Promise((resolve, reject) => {
-    getFile(path + 'demandes.txt').then(ordersFile => {
+    getFile(path + example.name + '/demandes.txt').then(ordersFile => {
       ordersFile.split('\n').forEach(order => {
-        if (order) { ordersDetail.push(Number(order)); }
+        if (order) { example.ordersCount.push(Number(order)); }
       });
       resolve();
     }).catch();
   });
 }
 
-function getDistances() {
+function getDistances(example) {
   return new Promise((resolve, reject) => {
-    getFile(path + 'distances.txt').then(distancesFile => {
+    getFile(path + example.name + '/distances.txt').then(distancesFile => {
       distancesFile.split('\n').forEach(line => {
         if (!line) { return; }
         distancesLine = [];
@@ -57,16 +59,16 @@ function getDistances() {
             distancesLine.push(Number(distance));
           }
         });
-        distances.push(distancesLine);
+        example.distances.push(distancesLine);
       });
       resolve();
     }).catch();
   });
 }
 
-function getTimes() {
+function getTimes(example) {
   return new Promise((resolve, reject) => {
-    getFile(path + 'times.txt').then(timesFile => {
+    getFile(path + example.name + '/times.txt').then(timesFile => {
       timesFile.split('\n').forEach(line => {
         if (!line) { return; }
         timesLine = [];
@@ -75,26 +77,38 @@ function getTimes() {
             timesLine.push(Number(time));
           }
         });
-        times.push(timesLine);
+        example.times.push(timesLine);
       });
       resolve();
     }).catch();
   });
 }
 
-function getVehicule() {
+function getVehicule(example) {
   return new Promise((resolve, reject) => {
-    getFile(path + 'vehicle.ini').then(data => {
+    getFile(path + example.name + '/vehicle.ini').then(data => {
       data.replace(/ /g,'').split('\n').forEach(conf => {
         const keyValue = conf.split('=');
         if (keyValue.length != 2) { return; }
-        config[keyValue[0]] = JSON.parse(keyValue[1]);
+        try { example.config[keyValue[0]] = JSON.parse(keyValue[1]); }
+        catch (e) { example.config[keyValue[0]] = keyValue[1]; }
       });
-      if (!config.end_time || !config.start_time) reject('missing config time');
-      const endStartSplit = [config.end_time, config.start_time].map(time => time.split(':'));
+      if (!example.config.end_time || !example.config.start_time) reject('missing config time');
+      const endStartSplit = [example.config.end_time, example.config.start_time].map(time => time.split(':'));
       const endSec = endStartSplit[0][0] * (60*60) + endStartSplit[0][1] * (60);
       const startSec = endStartSplit[1][0] * (60*60) + endStartSplit[1][1] * (60);
-      config.maxDuration = endSec - startSec;
+      example.config.maxDuration = endSec - startSec;
+      resolve();
+    }).catch();
+  });
+}
+
+function getExamples() {
+  return new Promise((resolve, reject) => {
+    getFile('/examples/').then(data => {
+      examples = $(data).find('li').map((e,i) => {
+        return new Example($(i).text().split('/')[0])
+      }).toArray();
       resolve();
     }).catch();
   });

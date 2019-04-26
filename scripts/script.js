@@ -1,16 +1,5 @@
-const path = 'examples/example_2/';
-
 // input
-coords = [];
-distances = [];
-ordersDetail = [];
-orders = [];
-times = [];
-warehouseIndex = 0;
-config = {};
-
-//
-indexes = [];
+examples = [];
 
 // Enum
 Limit = {
@@ -19,44 +8,28 @@ Limit = {
   "distance": "DISTANCE",
 }
 
-schedule_;
+const rides = [IterativeRide, MinDistRide, RandomRide];
 
-function init () {
-  Promise.all([
-      getCoords(),
-      getDistances(),
-      getTimes(),
-      getOrders(),
-      getVehicule()
-    ]).then(() => {
-      console.log('coords');
-      console.log(coords);
-      console.log('distances');
-      console.log(distances);
-      console.log('times');
-      console.log(times);
-      console.log('ordersDetail');
-      console.log(ordersDetail);
-      console.log('config');
-      console.log(config);
+function init() {
+  getExamples().then(() => {
+    console.log(examples);
+    Promise.all(examples.map(example => example.loadExample()))
+      .then(() => {
+        console.log('ok');
+        printRides();
+      }).catch(err => console.error(err));
 
-      coords.forEach((e, i) => {
-        if (i !== coords.length - 1) {
-          indexes.push(Number(i));
-        }
-      });
+    // schedule_ = new Schedule(orders);
+    // schedule_.displayHtml();
+    // console.log(schedule_.getScore());
+    // drawWarehouseOnMap();
 
-      ordersDetail.forEach((order_, index) => {
-        const order = new Order(index);
-        orders.push(order);
-        order.drawOnMap();
-      })
-      console.log(orders);
+  }).catch();
+}
 
-      schedule_ = new Schedule(orders);
-      schedule_.displayHtml();
-      console.log(schedule_.getScore());
-      drawWarehouseOnMap();
-
-    }).catch();
+function printRides() {
+  const rideSelect = $('#select-ride');
+  rides.forEach(ride => {
+    rideSelect.append(`<option value="${ride.name}">${ride.name}</option>`);
+  })
 }
