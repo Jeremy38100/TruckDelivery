@@ -9,7 +9,7 @@ colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
       '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
       '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'];
 
-const path = '/examples/'
+const path = '/datasets/'
 
 function getFile(fileName) {
   return new Promise((resolve, reject) => {
@@ -24,33 +24,33 @@ function getFile(fileName) {
   })
 }
 
-function getCoords(example) {
+function getCoords(dataset) {
   return new Promise((resolve, reject) => {
-    getFile(path + example.name + '/coords.txt').then(coordsFile => {
+    getFile(path + dataset.name + '/coords.txt').then(coordsFile => {
       coordsFile.split('\n').forEach(xy => {
         if (!xy) { return; }
-        example.coords.push(xy.split(',').map(Number))
+        dataset.coords.push(xy.split(',').map(Number))
       });
-      example.warehouseIndex = example.coords.length - 1;
+      dataset.warehouseIndex = dataset.coords.length - 1;
       resolve();
     }).catch();
   });
 }
 
-function getOrders(example) {
+function getOrders(dataset) {
   return new Promise((resolve, reject) => {
-    getFile(path + example.name + '/demandes.txt').then(ordersFile => {
+    getFile(path + dataset.name + '/demandes.txt').then(ordersFile => {
       ordersFile.split('\n').forEach(order => {
-        if (order) { example.ordersCount.push(Number(order)); }
+        if (order) { dataset.ordersCount.push(Number(order)); }
       });
       resolve();
     }).catch();
   });
 }
 
-function getDistances(example) {
+function getDistances(dataset) {
   return new Promise((resolve, reject) => {
-    getFile(path + example.name + '/distances.txt').then(distancesFile => {
+    getFile(path + dataset.name + '/distances.txt').then(distancesFile => {
       distancesFile.split('\n').forEach(line => {
         if (!line) { return; }
         distancesLine = [];
@@ -59,16 +59,16 @@ function getDistances(example) {
             distancesLine.push(Number(distance));
           }
         });
-        example.distances.push(distancesLine);
+        dataset.distances.push(distancesLine);
       });
       resolve();
     }).catch();
   });
 }
 
-function getTimes(example) {
+function getTimes(dataset) {
   return new Promise((resolve, reject) => {
-    getFile(path + example.name + '/times.txt').then(timesFile => {
+    getFile(path + dataset.name + '/times.txt').then(timesFile => {
       timesFile.split('\n').forEach(line => {
         if (!line) { return; }
         timesLine = [];
@@ -77,39 +77,43 @@ function getTimes(example) {
             timesLine.push(Number(time));
           }
         });
-        example.times.push(timesLine);
+        dataset.times.push(timesLine);
       });
       resolve();
     }).catch();
   });
 }
 
-function getVehicule(example) {
+function getVehicule(dataset) {
   return new Promise((resolve, reject) => {
-    getFile(path + example.name + '/vehicle.ini').then(data => {
+    getFile(path + dataset.name + '/vehicle.ini').then(data => {
       data.replace(/ /g,'').split('\n').forEach(conf => {
         const keyValue = conf.split('=');
         if (keyValue.length != 2) { return; }
-        try { example.config[keyValue[0]] = JSON.parse(keyValue[1]); }
-        catch (e) { example.config[keyValue[0]] = keyValue[1]; }
+        try { dataset.config[keyValue[0]] = JSON.parse(keyValue[1]); }
+        catch (e) { dataset.config[keyValue[0]] = keyValue[1]; }
       });
-      if (!example.config.end_time || !example.config.start_time) reject('missing config time');
-      const endStartSplit = [example.config.end_time, example.config.start_time].map(time => time.split(':'));
+      if (!dataset.config.end_time || !dataset.config.start_time) reject('missing config time');
+      const endStartSplit = [dataset.config.end_time, dataset.config.start_time].map(time => time.split(':'));
       const endSec = endStartSplit[0][0] * (60*60) + endStartSplit[0][1] * (60);
       const startSec = endStartSplit[1][0] * (60*60) + endStartSplit[1][1] * (60);
-      example.config.maxDuration = endSec - startSec;
+      dataset.config.maxDuration = endSec - startSec;
       resolve();
     }).catch();
   });
 }
 
-function getExamples() {
+function getDatasets() {
   return new Promise((resolve, reject) => {
-    getFile('/examples/').then(data => {
-      examples = $(data).find('li').map((e,i) => {
-        return new Example($(i).text().split('/')[0])
+    getFile('/datasets/').then(data => {
+      datasets = $(data).find('li').map((e,i) => {
+        return new Dataset($(i).text().split('/')[0])
       }).toArray();
       resolve();
     }).catch();
   });
+}
+
+function accReducer(acc, curr) {
+  return acc + curr;
 }

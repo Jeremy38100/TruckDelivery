@@ -1,4 +1,4 @@
-class Example {
+class Dataset {
   constructor(name) {
     this.name = name;
     this.coords = [];
@@ -10,7 +10,7 @@ class Example {
     this.warehouseIndex = 0;
   }
 
-  loadExample() {
+  loadDataset() {
     return new Promise((resolve, reject) => {
       Promise.all([
         getCoords(this),
@@ -22,7 +22,7 @@ class Example {
         this.ordersCount.forEach((order_, index) => {
           this.orders.push(new Order(index, this));
         })
-        $('#select-example').append(`<option value="${this.name}">${this.name}</option>`)
+        $('#select-dataset').append(`<option value="${this.name}">${this.name}</option>`)
         resolve();
       }).catch(reject);
    });

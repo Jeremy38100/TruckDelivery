@@ -1,5 +1,7 @@
 class Schedule {
-  constructor(orders) {
+  constructor(dataset, rideStartegy) {
+
+    this.dataset = dataset;
 
     this.nbViolationConstraintDistance = 0;
     this.nbViolationConstraintBags = 0;
@@ -9,18 +11,18 @@ class Schedule {
     this.nbMultipleVisit = 0;
 
     this.truckSchedules = [];
-    let truckSchedule = new TruckSchedule();
+    let truckSchedule = new TruckSchedule(dataset);
     let rideIndex = 0;
-    while (orders.length > 0) {
-      let ride = new MinDistRide(orders, rideIndex);
+    let remainingOrders = JSON.parse(JSON.stringify(dataset.orders))
+    while (remainingOrders.length > 0) {
+      let ride = new rideStartegy(dataset, remainingOrders, rideIndex);
 
       if (truckSchedule.cantAddRide(ride)) {
         this.truckSchedules.push(truckSchedule);
-        truckSchedule = new TruckSchedule();
+        truckSchedule = new TruckSchedule(dataset);
       }
       truckSchedule.addRide(ride);
       // TODO if an order can't be processed
-      ride.drawOnMap();
       rideIndex++;
     }
     this.truckSchedules.push(truckSchedule);
@@ -30,19 +32,19 @@ class Schedule {
   getBags() {
     return this.truckSchedules
       .map(truckSchedule => truckSchedule.getBags())
-      .reduce((acc, curr) => acc + curr);
+      .reduce(accReducer);
   }
 
   getDistance() {
     return this.truckSchedules
       .map(truckSchedule => truckSchedule.getDistance())
-      .reduce((acc, curr) => acc + curr);
+      .reduce(accReducer);
   }
 
   getDuration() {
     return this.truckSchedules
       .map(truckSchedule => truckSchedule.getDuration())
-      .reduce((acc, curr) => acc + curr);
+      .reduce(accReducer);
   }
 
   getScore() {
@@ -56,9 +58,21 @@ class Schedule {
   }
 
   displayHtml() {
-    $('#score').text(this.getScore().toFixed(3));
+    resetHtml();
+    $('#score').text(this.getScore().toFixed(4));
     this.truckSchedules.forEach((truckSchedule, index) => {
       truckSchedule.displayHtml(index);
+    });
+  }
+
+  drawOnMap() {
+    resetMap();
+    const warehouseCoords = this.dataset.coords[this.dataset.warehouseIndex]
+    centerTo(warehouseCoords)
+    drawWarehouse(warehouseCoords);
+    this.dataset.orders.forEach(drawOrder);
+    this.truckSchedules.forEach((truckSchedule, index) => {
+      truckSchedule.drawOnMap(index);
     });
   }
 }

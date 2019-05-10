@@ -1,5 +1,5 @@
 class IterativeRide extends Ride {
-  constructor(remainingIndexes) { super(remainingIndexes); }
+  constructor(dataset, remainingIndexes) { super(dataset, remainingIndexes); }
 
   getNextPointIndex() {
     const remainingIndexes = this.remainingIndexes;

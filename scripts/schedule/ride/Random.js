@@ -1,5 +1,5 @@
 class RandomRide extends Ride {
-  constructor(remainingIndexes) { super(remainingIndexes); }
+  constructor(dataset, remainingIndexes) { super(dataset, remainingIndexes); }
 
   getNextPointIndex() {
     return -1; // TODO

@@ -81,8 +81,8 @@ Fichier `.txt`
 
 # Files structure
 * `/dist` : contains WebApp dependencies (Map integration, markers ...)
-* `/examples` : contains data examples
-  * `example` : contains a single example
+* `/datasets` : contains data datasets
+  * `dataset` : contains a single dataset
     * `coords.txt` : warehouse is the last one
     * `demandes.txt`
     * `distances.txt`

@@ -1,8 +1,9 @@
 class Ride {
-  constructor(remainingOrders, rideIndex) {
+  constructor(dataset, remainingOrders, rideIndex) {
     this.rideIndex = rideIndex;
     this.orders = [];
-    this.pointsIndex = [warehouseIndex];
+    this.pointsIndex = [dataset.warehouseIndex];
+    this.dataset = dataset;
 
     this.limit = "";
 
@@ -17,7 +18,7 @@ class Ride {
         if (orderIndex >= 0) remainingOrders.splice(orderIndex, 1);
       }
     } while (nextOrder && remainingOrders.length > 0);
-    this.pointsIndex.push(warehouseIndex);
+    this.pointsIndex.push(dataset.warehouseIndex);
   }
 
   getLastIndex() {
@@ -37,22 +38,22 @@ class Ride {
   cantNextOrder(order) {
     // Pas de surcharge
     const orderIndex = order.clientIndex;
-    if (this.getBags() + order.order > config.capacity) {
+    if (this.getBags() + order.order > this.dataset.config.capacity) {
       this.limit = Limit.capacity;
       return this.limit;
     }
 
     const lastIndex = this.getLastIndex();
-    const distanceToPointAndHome = distances[lastIndex][orderIndex] + order.distanceToWarehouse;
-    const timeToPointAndHome = times[lastIndex][orderIndex] + order.durationToWarehouse;
+    const distanceToPointAndHome = this.dataset.distances[lastIndex][orderIndex] + order.distanceToWarehouse;
+    const timeToPointAndHome = this.dataset.times[lastIndex][orderIndex] + order.durationToWarehouse;
 
     // Pas de batterie vide
-    if (this.getDistance() + distanceToPointAndHome > config.max_dist) {
+    if (this.getDistance() + distanceToPointAndHome > this.dataset.config.max_dist) {
       this.limit = Limit.distance;
       return this.limit;
     }
     // Pas d'heure sup
-    if (this.getDuration() + timeToPointAndHome > config.max_time) {
+    if (this.getDuration() + timeToPointAndHome > this.dataset.config.max_time) {
       this.limit = Limit.duration;
       return this.limit;
     }
@@ -69,7 +70,7 @@ class Ride {
     if (ordersLength == 0) return 0;
     let distance = 0;
     for (let index = 1; index < this.pointsIndex.length; index++) {
-      distance += distances[index - 1][index];
+      distance += this.dataset.distances[index - 1][index];
     }
     return distance;
   }
@@ -79,7 +80,7 @@ class Ride {
     if (ordersLength == 0) return 0;
     let duration = 0;
     for (let index = 1; index < this.pointsIndex.length; index++) {
-      duration += times[this.pointsIndex[index-1]][this.pointsIndex[index]];
+      duration += this.dataset.times[this.pointsIndex[index-1]][this.pointsIndex[index]];
     }
     this.orders.forEach(order => {
       duration += order.orderDuration;
@@ -89,16 +90,7 @@ class Ride {
 
   getBags() {
     if (this.orders.length == 0) return 0;
-    return this.orders.map(order => order.order).reduce((acc, curr) => acc + curr)
-  }
-
-  drawOnMap() {
-    let latlngs = this.pointsIndex.map(i => coords[i]);
-    let polyline = L.polyline(latlngs, {
-      color: colorArray[this.rideIndex],
-      opacity: 1,
-      weight: 8
-    }).addTo(map);
+    return this.orders.map(order => order.order).reduce(accReducer)
   }
 
   displayHtml() {

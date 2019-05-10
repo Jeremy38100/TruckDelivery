@@ -1,6 +1,3 @@
-// input
-examples = [];
-
 // Enum
 Limit = {
   "duration": "DURATION",
@@ -9,11 +6,17 @@ Limit = {
 }
 
 const rides = [IterativeRide, MinDistRide, RandomRide];
+datasets = [];
+
+let selectedDataset = null;
+let selectedRide = null;
+
+let selectedSchedule = null;
 
 function init() {
-  getExamples().then(() => {
-    console.log(examples);
-    Promise.all(examples.map(example => example.loadExample()))
+  getDatasets().then(() => {
+    console.log(datasets);
+    Promise.all(datasets.map(dataset => dataset.loadDataset()))
       .then(() => {
         console.log('ok');
         printRides();
@@ -24,12 +27,36 @@ function init() {
     // console.log(schedule_.getScore());
     // drawWarehouseOnMap();
 
+    $('#select-dataset').change(update);
+    $('#select-ride').change(update);
+
   }).catch();
 }
 
 function printRides() {
   const rideSelect = $('#select-ride');
-  rides.forEach(ride => {
-    rideSelect.append(`<option value="${ride.name}">${ride.name}</option>`);
+  rides.forEach((ride, index) => {
+    rideSelect.append(`<option value="${index}">${ride.name}</option>`);
   })
+}
+
+function update() {
+  const dataset = $('#select-dataset').val();
+  const ride = $('#select-ride').val();
+
+  selectedDataset = datasets.find(ex => ex.name == dataset);
+  selectedRide = rides[Number(ride)];
+  if (!selectedDataset || !selectedRide) {
+    console.error("dataset or ride not found");
+    return -1;
+  }
+
+  selectedSchedule = new Schedule(selectedDataset, selectedRide);
+  selectedSchedule.displayHtml();
+  selectedSchedule.drawOnMap();
+}
+
+function resetHtml() {
+  $('#score').empty();
+  $('#schedule').empty();
 }
