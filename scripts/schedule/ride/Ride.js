@@ -2,7 +2,6 @@ class Ride {
   constructor(dataset, remainingOrders, rideIndex) {
     this.rideIndex = rideIndex;
     this.orders = [];
-    this.pointsIndex = [dataset.warehouseIndex];
     this.dataset = dataset;
 
     this.limit = "";
@@ -18,20 +17,16 @@ class Ride {
         if (orderIndex >= 0) remainingOrders.splice(orderIndex, 1);
       }
     } while (nextOrder && remainingOrders.length > 0);
-    this.pointsIndex.push(dataset.warehouseIndex);
   }
 
   getLastIndex() {
-    return this.pointsIndex[this.pointsIndex.length - 1];
-  }
-
-  addPoint(newIndex) {
-    this.pointsIndex.push(newIndex);
+    if (this.orders.length == 0) {
+      return this.dataset.warehouseIndex
+    }
+    return this.orders[this.orders.length - 1].clientIndex;
   }
 
   addOrder(order) {
-    const orderIndex = order.clientIndex;
-    this.addPoint(orderIndex);
     this.orders.push(order);
   }
 
@@ -65,13 +60,23 @@ class Ride {
     return null;
   }
 
+  getPointsIndex() {
+    return [this.dataset.warehouseIndex].concat(
+      this.orders.map(ride => ride.clientIndex),
+      [this.dataset.warehouseIndex]
+    );
+  }
+
   getDistance() {
     const ordersLength = this.orders.length;
     if (ordersLength == 0) return 0;
     let distance = 0;
-    for (let index = 1; index < this.pointsIndex.length; index++) {
-      distance += this.dataset.distances[index - 1][index];
+    let lastIndex = this.dataset.warehouseIndex;
+    for (let order of this.orders) {
+      distance += this.dataset.distances[lastIndex][order.clientIndex];
+      lastIndex = order.clientIndex;
     }
+    distance += this.dataset.distances[lastIndex][this.dataset.warehouseIndex];
     return distance;
   }
 
@@ -79,12 +84,13 @@ class Ride {
     const ordersLength = this.orders.length;
     if (ordersLength == 0) return 0;
     let duration = 0;
-    for (let index = 1; index < this.pointsIndex.length; index++) {
-      duration += this.dataset.times[this.pointsIndex[index-1]][this.pointsIndex[index]];
-    }
-    this.orders.forEach(order => {
+    let lastIndex = this.dataset.warehouseIndex;
+    for (let order of this.orders) {
+      duration += this.dataset.times[lastIndex][order.clientIndex];
       duration += order.orderDuration;
-    });
+      lastIndex = order.clientIndex;
+    }
+    duration += this.dataset.times[lastIndex][this.dataset.warehouseIndex];
     return duration;
   }
 

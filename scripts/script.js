@@ -22,11 +22,6 @@ function init() {
         printRides();
       }).catch(err => console.error(err));
 
-    // schedule_ = new Schedule(orders);
-    // schedule_.displayHtml();
-    // console.log(schedule_.getScore());
-    // drawWarehouseOnMap();
-
     $('#select-dataset').change(update);
     $('#select-ride').change(update);
 
@@ -54,6 +49,10 @@ function update() {
   selectedSchedule = new Schedule(selectedDataset, selectedRide);
   selectedSchedule.displayHtml();
   selectedSchedule.drawOnMap();
+
+  let neighborhood = new AddTruckNeighborhood(selectedSchedule);
+  neighborhood.process();
+  console.log(neighborhood.nbOptimisation);
 }
 
 function resetHtml() {

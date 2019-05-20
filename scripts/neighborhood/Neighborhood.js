@@ -1,7 +1,7 @@
 class Neighborhood {
   constructor(schedule) {
     this.schedule = schedule;
-    this.lastSchedule = Object.assign({}, schedule);
+    this.lastSchedule = schedule; // TODO copy object
     this.nbOptimisation = 0;
   }
 
@@ -13,6 +13,7 @@ class Neighborhood {
     const neighborhood = this.getNeighbours();
     let minScore = this.lastSchedule.getScore();
     let minNeighbour = null;
+
     neighborhood.forEach(neighbour => {
       const score = neighbour.getScore;
       if (score < minScore) {
@@ -24,6 +25,6 @@ class Neighborhood {
       this.nbOptimisation++;
       this.process();
     }
-    else lastSchedule = minNeighbour;
+    else this.lastSchedule = minNeighbour;
   }
 }

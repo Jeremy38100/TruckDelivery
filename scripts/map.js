@@ -36,7 +36,7 @@ function drawOrder(order) {
 }
 
 function drawRide(ride) {
-  let latlngs = ride.pointsIndex.map(i => ride.dataset.coords[i]);
+  let latlngs = ride.getPointsIndex().map(i => ride.dataset.coords[i]);
   L.polyline(latlngs, {
     color: colorArray[ride.rideIndex],
     opacity: 1,
