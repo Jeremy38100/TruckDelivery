@@ -39,9 +39,17 @@ class TruckSchedule {
   }
 
   displayHtml(index) {
+    const duration = moment.duration(this.getDuration(), 'seconds');
     $('#schedule').append(`
     <div class="list-group-item">
-      <p># ${index} - ${this.rides.length} rides - ${this.getDuration()} sec</p>
+      <p># ${index}</p>
+      <p>
+        <span class="badge badge-dark">${this.rides.length} rides</span>
+        <span class="badge badge-secondary">${this.getOrdersIndex().length} <i class="fas fa-user"></i></span>
+        <span class="badge badge-dark">${this.getBags()} <i class="fas fa-shopping-basket"></i></span>
+        <span class="badge badge-secondary">${this.getDistance().toFixed(2)} Km</span>
+        <span class="badge badge-dark">${duration.format("hh:mm:ss")} <i class="fas fa-stopwatch"></i></span>
+      </p>
       <ul class="list-group">
         ${this.rides.map((ride, i) => ride.displayHtml(i)).reduce(accReducer)}
       </ul>

@@ -118,6 +118,7 @@ class Ride {
   }
 
   displayHtml() {
+    const duration = moment.duration(this.getDuration(), 'seconds');
     return `
     <li class="list-group-item">
       <span class="badge" style="background-color: ${colorArray[this.rideIndex]}">&nbsp;&nbsp;</span>
@@ -125,7 +126,7 @@ class Ride {
       <span class="badge badge-secondary">${this.orders.length} <i class="fas fa-user"></i></span>
       <span class="badge badge-dark">${this.getBags()} <i class="fas fa-shopping-basket"></i></span>
       <span class="badge badge-secondary">${this.getDistance().toFixed(2)} Km</span>
-      <span class="badge badge-dark">${this.getDuration()} sec</span>
+      <span class="badge badge-dark">${duration.format("hh:mm:ss")} <i class="fas fa-stopwatch"></i></span>
     </li>
     `;
   }
