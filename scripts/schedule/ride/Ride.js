@@ -1,10 +1,12 @@
 class Ride {
-  constructor(dataset, remainingOrders, rideIndex) {
-    this.rideIndex = rideIndex;
+  constructor(dataset, remainingOrders, rideIndex, isCopy) {
+    this.rideIndex = rideIndex; // TODO remove
     this.orders = [];
     this.dataset = dataset;
 
     this.limit = "";
+
+    if (isCopy) return;
 
     let nextOrder = null;
     do {
@@ -99,6 +101,22 @@ class Ride {
     return this.orders.map(order => order.order).reduce(accReducer)
   }
 
+  getNbVioloationConstraint(constraint) {
+    switch (constraint) {
+      case constraint.DURATION:
+        return this.ride.getDuration() > this.dataset.config.maxDuration ? 1 : 0;
+      case constraint.DISTANCE:
+        return this.ride.getDistance() > this.dataset.config.max_dist ? 1 : 0;
+      case constraint.BAGS:
+        return this.ride.getBags() > this.dataset.config.capacity ? 1 : 0;
+    }
+    return 0;
+  }
+
+  getOrdersIndex() {
+    return this.orders.map(order => order.clientIndex);
+  }
+
   displayHtml() {
     return `
     <li class="list-group-item">
@@ -110,6 +128,14 @@ class Ride {
       <span class="badge badge-dark">${this.getDuration()} sec</span>
     </li>
     `;
+  }
+
+  copy() {
+    let rideCopy = new Ride(this.dataset, [], this.rideIndex, true);
+    for (let order of this.orders) {
+      rideCopy.orders.push(order);
+    }
+    return rideCopy;
   }
 
 }

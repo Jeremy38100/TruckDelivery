@@ -15,7 +15,8 @@ class Neighborhood {
     let minNeighbour = null;
 
     neighborhood.forEach(neighbour => {
-      const score = neighbour.getScore;
+      const score = neighbour.getScore();
+      console.log(score);
       if (score < minScore) {
         minScore = score;
         minNeighbour = neighbour;

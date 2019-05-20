@@ -5,6 +5,12 @@ Limit = {
   "distance": "DISTANCE",
 }
 
+Constraints = {
+  "DURATION": "DURATION",
+  "DISTANCE": "DISTANCE",
+  "BAGS": "BAGS"
+}
+
 const rides = [IterativeRide, MinDistRide, RandomRide];
 datasets = [];
 
