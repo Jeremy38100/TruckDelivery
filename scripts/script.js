@@ -12,6 +12,7 @@ Constraints = {
 }
 
 const rides = [IterativeRide, MinDistRide, RandomRide];
+const neighborhoods = [AddTruckNeighborhood];
 datasets = [];
 
 let selectedDataset = null;
@@ -26,6 +27,7 @@ function init() {
       .then(() => {
         console.log('ok');
         printRides();
+        printNeighborhoods();
       }).catch(err => console.error(err));
 
     $('#select-dataset').change(update);
@@ -38,6 +40,13 @@ function printRides() {
   const rideSelect = $('#select-ride');
   rides.forEach((ride, index) => {
     rideSelect.append(`<option value="${index}">${ride.name}</option>`);
+  })
+}
+
+function printNeighborhoods() {
+  const neighborhoodsSelect = $('#select-neighborhood');
+  neighborhoods.forEach((neighborhood, index) => {
+    neighborhoodsSelect.append(`<option value="${index}">${neighborhood.name}</option>`);
   })
 }
 
