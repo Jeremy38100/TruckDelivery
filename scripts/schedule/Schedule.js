@@ -1,16 +1,12 @@
 class Schedule {
-  constructor(dataset, rideStartegy) {
+  constructor(dataset, rideStartegy, isCopy) {
 
     this.dataset = dataset;
 
-    this.nbViolationConstraintDistance = 0;
-    this.nbViolationConstraintBags = 0;
-    this.nbViolationConstraintDuration = 0;
-
-    this.nbMissingVisits = 0;
-    this.nbMultipleVisit = 0;
-
     this.truckSchedules = [];
+
+    if (isCopy) return;
+
     let truckSchedule = new TruckSchedule(dataset);
     let rideIndex = 0;
     let remainingOrders = JSON.parse(JSON.stringify(dataset.orders))
@@ -51,10 +47,16 @@ class Schedule {
     return this.getDistance() // km
       + (this.getDuration() / 600) // s
       + ((this.truckSchedules.length - 1) * 500)
-      + (this.nbViolationConstraintDistance * 50000)
-      + (this.nbViolationConstraintBags * 10000)
-      + (this.nbViolationConstraintDuration * 1000)
-      + ((this.nbMissingVisits + this.nbMultipleVisit) * 100000);
+      + (this.getNbVioloationConstraint(Constraints.BAGS) * 50000)
+      + (this.getNbVioloationConstraint(Constraints.DISTANCE) * 10000)
+      + (this.getNbVioloationConstraint(Constraints.DURATION) * 1000)
+      + ((this.getNbMissingVisit() + this.getNbMultipleVisit()) * 100000);
+  }
+
+  getNbVioloationConstraint(constraint) {
+    return this.truckSchedules
+      .map(truckSchedule => truckSchedule.getNbVioloationConstraint(constraint))
+      .reduce(accReducer);
   }
 
   displayHtml() {
@@ -63,6 +65,34 @@ class Schedule {
     this.truckSchedules.forEach((truckSchedule, index) => {
       truckSchedule.displayHtml(index);
     });
+  }
+
+  getOrdersIndex() {
+    return this.truckSchedules
+      .map(truckSchedule => truckSchedule.getOrdersIndex())
+      .reduce(concatReducer);
+  }
+
+  getNbMissingVisit() {
+    const ordersIndex = this.getOrdersIndex();
+    let nbMissing = 0;
+    for (let order of this.dataset.orders) {
+      if (!ordersIndex.includes(order.clientIndex)) {
+        nbMissing++;
+      }
+    }
+    return nbMissing;
+  }
+
+  getNbMultipleVisit() {
+    const ordersIndex = this.getOrdersIndex();
+    let nbMultiple = 0;
+    for (let order of this.dataset.orders) {
+      if (count(ordersIndex, order.clientIndex) > 1) {
+        nbMultiple++;
+      }
+    }
+    return nbMultiple;
   }
 
   drawOnMap() {
@@ -74,5 +104,13 @@ class Schedule {
     this.truckSchedules.forEach((truckSchedule, index) => {
       truckSchedule.drawOnMap(index);
     });
+  }
+
+  copy() {
+    let scheduleCopy = new Schedule(this.dataset, this.rideStartegy, true);
+    for (let truckSchedule of this.truckSchedules) {
+      scheduleCopy.truckSchedules.push(truckSchedule.copy());
+    }
+    return scheduleCopy;
   }
 }

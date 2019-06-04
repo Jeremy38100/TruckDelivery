@@ -1,10 +1,12 @@
 class Ride {
-  constructor(dataset, remainingOrders, rideIndex) {
-    this.rideIndex = rideIndex;
+  constructor(dataset, remainingOrders, rideIndex, isCopy) {
+    this.rideIndex = rideIndex; // TODO remove
     this.orders = [];
     this.dataset = dataset;
 
     this.limit = "";
+
+    if (isCopy) return;
 
     let nextOrder = null;
     do {
@@ -99,7 +101,24 @@ class Ride {
     return this.orders.map(order => order.order).reduce(accReducer)
   }
 
+  getNbVioloationConstraint(constraint) {
+    switch (constraint) {
+      case constraint.DURATION:
+        return this.ride.getDuration() > this.dataset.config.maxDuration ? 1 : 0;
+      case constraint.DISTANCE:
+        return this.ride.getDistance() > this.dataset.config.max_dist ? 1 : 0;
+      case constraint.BAGS:
+        return this.ride.getBags() > this.dataset.config.capacity ? 1 : 0;
+    }
+    return 0;
+  }
+
+  getOrdersIndex() {
+    return this.orders.map(order => order.clientIndex);
+  }
+
   displayHtml() {
+    const duration = moment.duration(this.getDuration(), 'seconds');
     return `
     <li class="list-group-item">
       <span class="badge" style="background-color: ${colorArray[this.rideIndex]}">&nbsp;&nbsp;</span>
@@ -107,9 +126,17 @@ class Ride {
       <span class="badge badge-secondary">${this.orders.length} <i class="fas fa-user"></i></span>
       <span class="badge badge-dark">${this.getBags()} <i class="fas fa-shopping-basket"></i></span>
       <span class="badge badge-secondary">${this.getDistance().toFixed(2)} Km</span>
-      <span class="badge badge-dark">${this.getDuration()} sec</span>
+      <span class="badge badge-dark">${duration.format("hh:mm:ss")} <i class="fas fa-stopwatch"></i></span>
     </li>
     `;
+  }
+
+  copy() {
+    let rideCopy = new Ride(this.dataset, [], this.rideIndex, true);
+    for (let order of this.orders) {
+      rideCopy.orders.push(order);
+    }
+    return rideCopy;
   }
 
 }

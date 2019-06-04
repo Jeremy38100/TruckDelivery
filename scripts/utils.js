@@ -117,3 +117,15 @@ function getDatasets() {
 function accReducer(acc, curr) {
   return acc + curr;
 }
+
+function minReducer(acc, curr) {
+  return acc > curr ? curr : acc;
+}
+
+function concatReducer(acc, curr) {
+  return acc.concat(curr);
+}
+
+function count(arr, elt) {
+  return arr.filter(e => e == elt).length;
+}
