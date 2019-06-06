@@ -13,6 +13,7 @@ class Neighborhood {
   getABetterNeighbour(previousScore) {
   }
 
+  // exhaustive
   process() {
     const neighborhood = this.getNeighbours();
     console.log('nbCombinations: ' + neighborhood.length);
@@ -37,6 +38,7 @@ class Neighborhood {
     }
   }
 
+  // non exhaustive
   process2() {
     let betterSchedule = this.getABetterNeighbour(this.lastSchedule.getScore());
     this.nbOptimisation = 0;

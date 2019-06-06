@@ -25,23 +25,6 @@ Master 2 MIAGE - Université Grenoble Alpes - Option Energie
 - 📦 les commandes ne sont pas divisés dans plusieurs camions
 - 👥 tous les clients sont livrés
 
-### Fonction objectif
-
-F = &sum;(w<sub>i</sub> * f<sub>i</sub>)
-
-Objectif : minimiser `F`
-
-<!-- - min : max(0, &sum;[d<sub>i</sub>x<sub>i</sub> - capacity]) -->
-
-Trouver des poids sur les contraintes
-
-| Contrainte                  | Poids |
-| --------------------------- | ----- |
-| livrer tous les clients     | 95    |
-| distance avant rechargement | 100   |
-| capcaité max du camion      | 80    |
-| durée max du camion         | 75    |
-
 ### Travail rendu
 - Code commenté
 - Tests (validation)
@@ -60,8 +43,6 @@ Se rendre sur un **navigateur Web** à l'adresse : `localhost:8000`
 Ouvrir la console développeur du navigateur web pour voir les logs.
 
 # Export
-
->  ❗ Not yet available
 
 Fichier `.txt`
 
@@ -151,3 +132,6 @@ class Schedule {
     truckSchedules: TruckSchedule[],
 }
 ```
+
+# Improvements :
+🔋 The recharge timeout (1h) is not implemented yet. We should integrate it when we build the solution.

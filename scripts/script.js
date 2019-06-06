@@ -12,7 +12,7 @@ Constraints = {
 }
 
 const rides = [MinDistRide, RandomRide]; // IterativeRide
-const neighborhoods = [SwapOrderNeighborhood, AddTruckNeighborhood];
+const neighborhoods = [SwapOrderNeighborhood, SwapRandomNeighborhood, AddTruckNeighborhood];
 datasets = [];
 
 let selectedDataset = null;
@@ -37,6 +37,7 @@ function init() {
     $('#select-dataset').change(update);
     $('#select-ride').change(update);
     $('#select-neighborhood').change(update);
+    $('#radioExhaustive').change(update);
 
   }).catch();
 }
@@ -55,6 +56,7 @@ function printNeighborhoods() {
   })
 }
 
+// Recalculate function when change inputs
 async function update() {
   await showSpinner();
   const dataset = $('#select-dataset').val();

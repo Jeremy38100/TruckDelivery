@@ -1,3 +1,5 @@
+// The goal is to try all orders permutations in the global schedule
+// ⚠️ Glutton
 class SwapOrderNeighborhood extends Neighborhood {
 
   constructor(schedule) { super(schedule); }
@@ -10,9 +12,7 @@ class SwapOrderNeighborhood extends Neighborhood {
     const bIterator = new ScheduleIteratorOrder(this.lastSchedule);
 
     do {
-      const aOrder = this.lastSchedule.getOrderFromIndex(aIterator.index);
       do {
-        const bOrder = this.lastSchedule.getOrderFromIndex(bIterator.index);
         const scheduleCopy = this.lastSchedule.copy();
         scheduleCopy.swap(aIterator.index, bIterator.index);
         neighbours.push(scheduleCopy);

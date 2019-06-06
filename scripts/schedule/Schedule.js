@@ -1,3 +1,4 @@
+// daily schedule
 class Schedule {
   constructor(dataset, rideStartegy, isCopy) {
 

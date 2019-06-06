@@ -25,13 +25,12 @@
     <script type="text/javascript" src="scripts/schedule/Order.js"></script>
     <script type="text/javascript" src="scripts/schedule/ride/Ride.js"></script>
     <script type="text/javascript" src="scripts/schedule/ride/MinDist.js"></script>
-    <script type="text/javascript" src="scripts/schedule/ride/FillUp.js"></script>
     <script type="text/javascript" src="scripts/schedule/ride/Random.js"></script>
     <script type="text/javascript" src="scripts/schedule/truckSchedule/TruckSchedule.js"></script>
     <script type="text/javascript" src="scripts/neighborhood/Neighborhood.js"></script>
     <script type="text/javascript" src="scripts/neighborhood/AddTruck.js"></script>
-    <script type="text/javascript" src="scripts/neighborhood/AddRide.js"></script>
     <script type="text/javascript" src="scripts/neighborhood/SwapOrder.js"></script>
+    <script type="text/javascript" src="scripts/neighborhood/SwapRandom.js"></script>
     <script type="text/javascript" src="scripts/script.js"></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -66,6 +65,10 @@
                   <label class="input-group-text" for="select-neighborhood">Choose Neighborhood</label>
                 </div>
                 <select class="custom-select" id="select-neighborhood"></select>
+              </div>
+
+              <div class="alert alert-danger" role="alert">
+                  ⚠️ SwapOrderNeighborhood is glutton, do not try on huge dataset > 100
               </div>
 
               <h5>Neighborhood :</h5>
