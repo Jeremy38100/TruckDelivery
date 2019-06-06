@@ -1,22 +1,13 @@
-const singleBagDuration = 5;
-const orderDuration = 10;
+const singleBagDuration = 10; // 10sec
+const orderDuration = 5*60; // 5min
 
 class Order {
-  constructor(orderIndex) {
+  constructor(orderIndex, dataset) {
     this.clientIndex = orderIndex;
-    this.order = ordersDetail[orderIndex];
-    this.coords = coords[orderIndex];
-    this.orderDuration = this.order * singleBagDuration * orderDuration;
-    this.distanceToWarehouse = distances[orderIndex][warehouseIndex];
-    this.durationToWarehouse = times[orderIndex][warehouseIndex];
-  }
-
-  drawOnMap() {
-    let marker = L.marker(this.coords, {icon: L.AwesomeMarkers.icon({
-      icon: 'user',
-      prefix: 'fa',
-      markerColor: 'blue',
-      iconColor: '#0000A0'
-    }) }).addTo(map).bindPopup(`#${this.clientIndex} : ${this.order} <i class="fas fa-shopping-basket"></i>`);
+    this.order = dataset.ordersCount[orderIndex];
+    this.coords = dataset.coords[orderIndex];
+    this.orderDuration = this.order * singleBagDuration + orderDuration;
+    this.distanceToWarehouse = dataset.distances[orderIndex][dataset.warehouseIndex];
+    this.durationToWarehouse = dataset.times[orderIndex][dataset.warehouseIndex];
   }
 }

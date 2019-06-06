@@ -1,5 +1,5 @@
 class MinDistRide extends Ride {
-  constructor(remainingIndexes, depotIndex) { super(remainingIndexes, depotIndex); }
+  constructor(dataset, remainingIndexes, depotIndex) { super(dataset, remainingIndexes, depotIndex); }
 
   getNextOrder(remainingOrders) {
     let minDistOrder = null;
@@ -8,7 +8,7 @@ class MinDistRide extends Ride {
       const reason = this.cantNextOrder(order);
       if (!reason) {
         const orderIndex = order.clientIndex;
-        const distanceToLastPoint = distances[this.getLastIndex()][orderIndex];
+        const distanceToLastPoint = this.dataset.distances[this.getLastIndex()][orderIndex];
         if (minDistOrder == null || distanceToLastPoint < minDistValue) { 
           minDistOrder = order;
           minDistValue = distanceToLastPoint;

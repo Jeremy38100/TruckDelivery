@@ -6,7 +6,7 @@ class AddRide extends Neighborhood {
 
   // Override
   getNeighbours() {
-    let neighbours = [];
+    const neighbours = [];
     for (let truckSchedule of this.lastSchedule.truckSchedules) {
       let minOrdersPerRide = truckSchedule.rides
         .map(ride => ride.orders.length)
@@ -16,6 +16,7 @@ class AddRide extends Neighborhood {
       }
       // TODO : check if empty ride
     }
+    return neighbours;
   }
 
 }

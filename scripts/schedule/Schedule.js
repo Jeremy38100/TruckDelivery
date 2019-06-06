@@ -1,26 +1,24 @@
 class Schedule {
-  constructor(orders) {
+  constructor(dataset, rideStartegy, isCopy) {
 
-    this.nbViolationConstraintDistance = 0;
-    this.nbViolationConstraintBags = 0;
-    this.nbViolationConstraintDuration = 0;
-
-    this.nbMissingVisits = 0;
-    this.nbMultipleVisit = 0;
+    this.dataset = dataset;
 
     this.truckSchedules = [];
-    let truckSchedule = new TruckSchedule();
+
+    if (isCopy) return;
+
+    let truckSchedule = new TruckSchedule(dataset);
     let rideIndex = 0;
-    while (orders.length > 0) {
-      let ride = new MinDistRide(orders, rideIndex);
+    let remainingOrders = JSON.parse(JSON.stringify(dataset.orders))
+    while (remainingOrders.length > 0) {
+      let ride = new rideStartegy(dataset, remainingOrders, rideIndex);
 
       if (truckSchedule.cantAddRide(ride)) {
         this.truckSchedules.push(truckSchedule);
-        truckSchedule = new TruckSchedule();
+        truckSchedule = new TruckSchedule(dataset);
       }
       truckSchedule.addRide(ride);
       // TODO if an order can't be processed
-      ride.drawOnMap();
       rideIndex++;
     }
     this.truckSchedules.push(truckSchedule);
@@ -30,35 +28,137 @@ class Schedule {
   getBags() {
     return this.truckSchedules
       .map(truckSchedule => truckSchedule.getBags())
-      .reduce((acc, curr) => acc + curr);
+      .reduce(accReducer);
   }
 
   getDistance() {
     return this.truckSchedules
       .map(truckSchedule => truckSchedule.getDistance())
-      .reduce((acc, curr) => acc + curr);
+      .reduce(accReducer);
   }
 
   getDuration() {
     return this.truckSchedules
       .map(truckSchedule => truckSchedule.getDuration())
-      .reduce((acc, curr) => acc + curr);
+      .reduce(accReducer);
   }
 
   getScore() {
     return this.getDistance() // km
       + (this.getDuration() / 600) // s
       + ((this.truckSchedules.length - 1) * 500)
-      + (this.nbViolationConstraintDistance * 50000)
-      + (this.nbViolationConstraintBags * 10000)
-      + (this.nbViolationConstraintDuration * 1000)
-      + ((this.nbMissingVisits + this.nbMultipleVisit) * 100000);
+      + (this.getNbVioloationConstraint(Constraints.BAGS) * 50000)
+      + (this.getNbVioloationConstraint(Constraints.DISTANCE) * 10000)
+      + (this.getNbVioloationConstraint(Constraints.DURATION) * 1000)
+      + ((this.getNbMissingVisit() + this.getNbMultipleVisit()) * 100000);
+  }
+
+  getNbVioloationConstraint(constraint) {
+    return this.truckSchedules
+      .map(truckSchedule => truckSchedule.getNbVioloationConstraint(constraint))
+      .reduce(accReducer);
   }
 
   displayHtml() {
-    $('#score').text(this.getScore().toFixed(3));
+    resetHtml();
+    $('#score').text(this.getScore().toFixed(4));
     this.truckSchedules.forEach((truckSchedule, index) => {
       truckSchedule.displayHtml(index);
     });
+  }
+
+  getOrdersIndex() {
+    return this.truckSchedules
+      .map(truckSchedule => truckSchedule.getOrdersIndex())
+      .reduce(concatReducer);
+  }
+
+  getNbMissingVisit() {
+    const ordersIndex = this.getOrdersIndex();
+    let nbMissing = 0;
+    for (let order of this.dataset.orders) {
+      if (!ordersIndex.includes(order.clientIndex)) {
+        nbMissing++;
+      }
+    }
+    return nbMissing;
+  }
+
+  getNbMultipleVisit() {
+    const ordersIndex = this.getOrdersIndex();
+    let nbMultiple = 0;
+    for (let order of this.dataset.orders) {
+      if (count(ordersIndex, order.clientIndex) > 1) {
+        nbMultiple++;
+      }
+    }
+    return nbMultiple;
+  }
+
+  drawOnMap() {
+    resetMap();
+    const warehouseCoords = this.dataset.coords[this.dataset.warehouseIndex]
+    centerTo(warehouseCoords)
+    drawWarehouse(warehouseCoords);
+    this.dataset.orders.forEach(drawOrder);
+    this.truckSchedules.forEach((truckSchedule, index) => {
+      truckSchedule.drawOnMap(index);
+    });
+  }
+
+  copy() {
+    let scheduleCopy = new Schedule(this.dataset, this.rideStartegy, true);
+    for (let truckSchedule of this.truckSchedules) {
+      scheduleCopy.truckSchedules.push(truckSchedule.copy());
+    }
+    return scheduleCopy;
+  }
+
+  print() {
+    for (let truckSchedule of this.truckSchedules) {
+      for (let ride of truckSchedule.rides) {
+        console.log(ride.orders.map(o => o.clientIndex).join());
+      }
+      console.log('------');
+    }
+    console.log('distance: ' + this.getDistance());
+    console.log('duration: ' + this.getDuration());
+    console.log('------');
+  }
+
+  swap(aIndex, bIndex) {
+    const bOrder = this.getOrderFromIndex(bIndex);
+
+    this.setOrderFromIndex(bIndex, this.getOrderFromIndex(aIndex));
+    this.setOrderFromIndex(aIndex, bOrder);
+  }
+
+  setOrderFromIndex(index, order) {
+    this.truckSchedules[index.truckScheduleIndex]
+        .rides[index.rideIndex].orders[index.orderIndex] = order;
+  }
+
+  getOrderFromIndex(index) {
+    return this.getRideFromIndex(index).orders[index.orderIndex];
+  }
+
+  getRideFromIndex(index) {
+    return this.getTruckScheduleFromIndex(index).rides[index.rideIndex];
+  }
+
+  getTruckScheduleFromIndex(index) {
+    return this.truckSchedules[index.truckScheduleIndex];
+  }
+
+  export() {
+    return this.truckSchedules.map(t => t.export()).join('\n');
+  }
+}
+
+class OrderInSchedule {
+  constructor() {
+    this.truckScheduleIndex = 0;
+    this.rideIndex = 0;
+    this.orderIndex = 0;
   }
 }

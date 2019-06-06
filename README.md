@@ -45,6 +45,12 @@ Trouver des poids sur les contraintes
 ### Travail rendu
 - Code commenté
 - Tests (validation)
+- Instruction d'installation / Execution
+- Copyright et Licences
+- Export (un fichier par heuristique)
+- Réponses PDF / MD
+  - Reference au code
+- A rendre le 6 Juin
 
 ## Lancer l'application
 A la racine du projet lancer un **webserver** (par exemple avec Pyhton : `python -m SimpleHTTPServer 8000`)
@@ -81,8 +87,8 @@ Fichier `.txt`
 
 # Files structure
 * `/dist` : contains WebApp dependencies (Map integration, markers ...)
-* `/examples` : contains data examples
-  * `example` : contains a single example
+* `/datasets` : contains data datasets
+  * `dataset` : contains a single dataset
     * `coords.txt` : warehouse is the last one
     * `demandes.txt`
     * `distances.txt`
@@ -104,7 +110,7 @@ Fichier `.txt`
 
 # Data Structure
 
-### 👤 Order
+### 👤Order
 
 ```typescript
 class Order {
@@ -123,7 +129,6 @@ A Ride is a list of orders the driver can process without coming back to warehou
 class Ride {
     rideIndex: number,
     orders: Order[], // orders to delivery in this ride
-    pointsIndex: number[] // all coords of the ride (start and end with warehouse coords)
 }
 ```
 

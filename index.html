@@ -11,9 +11,15 @@
    integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
    crossorigin=""></script>
     <script src="dist/leaflet.awesome-markers.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <!-- Moment.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 
+    <!-- moment-duration-format plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-duration-format/1.3.0/moment-duration-format.min.js"></script>
     <script type="text/javascript" src="scripts/map.js"></script>
 
+    <script type="text/javascript" src="scripts/Dataset.js"></script>
     <script type="text/javascript" src="scripts/utils.js"></script>
     <script type="text/javascript" src="scripts/schedule/Schedule.js"></script>
     <script type="text/javascript" src="scripts/schedule/Order.js"></script>
@@ -22,25 +28,94 @@
     <script type="text/javascript" src="scripts/schedule/ride/Iterative.js"></script>
     <script type="text/javascript" src="scripts/schedule/ride/Random.js"></script>
     <script type="text/javascript" src="scripts/schedule/truckSchedule/TruckSchedule.js"></script>
+    <script type="text/javascript" src="scripts/neighborhood/Neighborhood.js"></script>
+    <script type="text/javascript" src="scripts/neighborhood/AddTruck.js"></script>
+    <script type="text/javascript" src="scripts/neighborhood/AddRide.js"></script>
+    <script type="text/javascript" src="scripts/neighborhood/SwapOrder.js"></script>
     <script type="text/javascript" src="scripts/script.js"></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <title>Truck Delivery</title>
   </head>
   <body>
     <div class="container-fluid">
       <p>Lucas Freyssinet & Jérémy Roche</p>
-      <h3>Solution score : <span id="score"></span></h3>
+      <h1>🚚 Truck delivery</h1>
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="select-dataset">📁 Choose dataset</label>
+                </div>
+                <select class="custom-select" id="select-dataset"></select>
+              </div>
+
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="select-ride">Choose Ride Heuristic</label>
+                </div>
+                <select class="custom-select" id="select-ride"></select>
+              </div>
+
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <label class="input-group-text" for="select-neighborhood">Choose Neighborhood</label>
+                </div>
+                <select class="custom-select" id="select-neighborhood"></select>
+              </div>
+
+              <h5>Neighborhood :</h5>
+              <div class="custom-control custom-radio">
+                <input type="radio" id="radioExhaustive" name="customRadio" class="custom-control-input">
+                <label class="custom-control-label" for="radioExhaustive">Exhaustive</label>
+              </div>
+              <div class="custom-control custom-radio">
+                <input type="radio" id="customRadio2" name="customRadio" class="custom-control-input" checked>
+                <label class="custom-control-label" for="customRadio2">Non Exhaustive</label>
+              </div>
+
+              <button type="submit" class="btn btn-primary float-right" onclick="update()">Calculate</button>
+              <button type="submit" id="dwnButton" class="btn btn-success float-right mx-2" onclick="download('abc.txt', 'fghjikl')">Export .txt</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row m-2">
+        <div class="col-12 text-center">
+          <div id="spinner" class="spinner-border" role="status" style="display: none">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <p>Orders : <b id="nbOrders"></b></p>
+              <p>Score : <b id="before"></b></p>
+              <p>Score after Nearest neighbor : <b id="after"></b></p>
+              <p>Nearest neighbor iterations : <b id="iterations"></b></p>
+              <p>Process time : <b id="time"></b>ms</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-primary" role="alert">
+        ✅ Solution score : <b id="score"></b>
+      </div>
+
       <div class="row">
         <div class="col-5">
-          <h1>List</h1>
+          <h1>🗓 Schedule</h1>
           <div class="list-group" id="schedule"></div>
         </div>
         <div class="col-7">
-            <h1>Map</h1>
-          <div id="mapid" style="height: 80%;"></div>
+            <h1>🗺 Map</h1>
+          <div id="mapid" style="height: 500px"></div>
         </div>
       </div>
     </div>
