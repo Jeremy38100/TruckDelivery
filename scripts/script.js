@@ -12,7 +12,7 @@ Constraints = {
 }
 
 const rides = [MinDistRide, RandomRide]; // IterativeRide
-const neighbourhoods = [SwapOrderNeighbourhood, SwapRandomNeighbourhood, AddTruckNeighbourhood];
+const neighbourhoods = [SwapRandomNeighbourhood, SwapOrderNeighbourhood];
 datasets = [];
 
 let selectedDataset = null;
@@ -95,7 +95,7 @@ async function update() {
   lastFileName = $('#select-dataset').val()
       + '_' + rides[$('#select-neighbourhood').val()].name
       + '_' + neighbourhoods[ $('#select-neighbourhood').val()].name
-      + '_' + isExhaustive ? 'exhaustive' : 'non_exhaustive'
+      + '_' + (isExhaustive ? 'exhaustive' : 'non_exhaustive')
       + '.txt';
   lastFileValue = neighbourhood.lastSchedule.export();
   $('#dwnButton').show();
