@@ -113,4 +113,52 @@ class Schedule {
     }
     return scheduleCopy;
   }
+
+  print() {
+    for (let truckSchedule of this.truckSchedules) {
+      for (let ride of truckSchedule.rides) {
+        console.log(ride.orders.map(o => o.clientIndex).join());
+      }
+      console.log('------');
+    }
+    console.log('distance: ' + this.getDistance());
+    console.log('duration: ' + this.getDuration());
+    console.log('------');
+  }
+
+  swap(aIndex, bIndex) {
+    const bOrder = this.getOrderFromIndex(bIndex);
+
+    this.setOrderFromIndex(bIndex, this.getOrderFromIndex(aIndex));
+    this.setOrderFromIndex(aIndex, bOrder);
+  }
+
+  setOrderFromIndex(index, order) {
+    this.truckSchedules[index.truckScheduleIndex]
+        .rides[index.rideIndex].orders[index.orderIndex] = order;
+  }
+
+  getOrderFromIndex(index) {
+    return this.getRideFromIndex(index).orders[index.orderIndex];
+  }
+
+  getRideFromIndex(index) {
+    return this.getTruckScheduleFromIndex(index).rides[index.rideIndex];
+  }
+
+  getTruckScheduleFromIndex(index) {
+    return this.truckSchedules[index.truckScheduleIndex];
+  }
+
+  export() {
+    return this.truckSchedules.map(t => t.export()).join('\n');
+  }
+}
+
+class OrderInSchedule {
+  constructor() {
+    this.truckScheduleIndex = 0;
+    this.rideIndex = 0;
+    this.orderIndex = 0;
+  }
 }

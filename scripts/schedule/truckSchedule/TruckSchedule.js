@@ -42,7 +42,7 @@ class TruckSchedule {
     const duration = moment.duration(this.getDuration(), 'seconds');
     $('#schedule').append(`
     <div class="list-group-item">
-      <p># ${index}</p>
+      <p>🚚 # ${index}</p>
       <p>
         <span class="badge badge-dark">${this.rides.length} rides</span>
         <span class="badge badge-secondary">${this.getOrdersIndex().length} <i class="fas fa-user"></i></span>
@@ -69,4 +69,10 @@ class TruckSchedule {
     return truckScheduleCopy;
   }
 
+  export() {
+    return this.rides.map(ride => ride.export()).join(',R,');
+  }
+
 }
+
+// TODO Temps de rechargement : 3600sec !

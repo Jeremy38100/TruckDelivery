@@ -139,4 +139,8 @@ class Ride {
     return rideCopy;
   }
 
+  export() {
+    return this.getOrdersIndex().join(',');
+  }
+
 }

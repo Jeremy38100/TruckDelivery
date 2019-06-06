@@ -11,14 +11,18 @@ Constraints = {
   "BAGS": "BAGS"
 }
 
-const rides = [IterativeRide, MinDistRide, RandomRide];
-const neighborhoods = [AddTruckNeighborhood];
+const rides = [MinDistRide, RandomRide]; // IterativeRide
+const neighborhoods = [SwapOrderNeighborhood, AddTruckNeighborhood];
 datasets = [];
 
 let selectedDataset = null;
 let selectedRide = null;
+let selectedNeighborhood = null;
 
 let selectedSchedule = null;
+
+let lastFileName = '';
+let lastFileValue = 'abc\nabc';
 
 function init() {
   getDatasets().then(() => {
@@ -32,6 +36,7 @@ function init() {
 
     $('#select-dataset').change(update);
     $('#select-ride').change(update);
+    $('#select-neighborhood').change(update);
 
   }).catch();
 }
@@ -50,27 +55,71 @@ function printNeighborhoods() {
   })
 }
 
-function update() {
+async function update() {
+  await showSpinner();
   const dataset = $('#select-dataset').val();
   const ride = $('#select-ride').val();
+  const neighb = $('#select-neighborhood').val();
 
   selectedDataset = datasets.find(ex => ex.name == dataset);
   selectedRide = rides[Number(ride)];
-  if (!selectedDataset || !selectedRide) {
-    console.error("dataset or ride not found");
+  selectedNeighborhood = neighborhoods[Number(neighb)];
+  if (!selectedDataset || !selectedRide || !selectedNeighborhood) {
+    console.error("dataset or ride or neighborhood not found");
     return -1;
   }
 
+  $('#nbOrders').text(selectedDataset.orders.length);
+  const startMs = new Date();
   selectedSchedule = new Schedule(selectedDataset, selectedRide);
   selectedSchedule.displayHtml();
   selectedSchedule.drawOnMap();
+  $('#before').text(selectedSchedule.getScore().toFixed(3));
 
-  let neighborhood = new AddTruckNeighborhood(selectedSchedule);
-  neighborhood.process();
-  console.log(neighborhood.nbOptimisation);
+  let neighborhood = new selectedNeighborhood(selectedSchedule);
+  const isExhaustive = $('#radioExhaustive').prop('checked');
+  if (isExhaustive) {
+    neighborhood.process();
+  } else {
+    neighborhood.process2();
+  }
+  neighborhood.lastSchedule.displayHtml();
+  neighborhood.lastSchedule.drawOnMap();
+  $('#after').text(neighborhood.lastSchedule.getScore().toFixed(3));
+  $('#iterations').text(neighborhood.nbOptimisation);
+  $('#spinner').hide();
+  $('#time').text(new Date() - startMs);
+  lastFileName = $('#select-dataset').val()
+      + '_' + rides[$('#select-neighborhood').val()].name
+      + '_' + neighborhoods[ $('#select-neighborhood').val()].name
+      + '_' + isExhaustive ? 'exhaustive' : 'non_exhaustive'
+      + '.txt';
+  lastFileValue = neighborhood.lastSchedule.export();
+  $('#dwnButton').show();
+}
+
+function showSpinner() {
+  return new Promise((res, rej) => {
+    $('#spinner').show();
+    $('#dwnButton').hide();
+    setTimeout(res, 10);
+  });
 }
 
 function resetHtml() {
   $('#score').empty();
   $('#schedule').empty();
+}
+
+function download() {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(lastFileValue));
+  element.setAttribute('download', lastFileName);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
 }

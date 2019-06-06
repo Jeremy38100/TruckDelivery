@@ -31,6 +31,7 @@
     <script type="text/javascript" src="scripts/neighborhood/Neighborhood.js"></script>
     <script type="text/javascript" src="scripts/neighborhood/AddTruck.js"></script>
     <script type="text/javascript" src="scripts/neighborhood/AddRide.js"></script>
+    <script type="text/javascript" src="scripts/neighborhood/SwapOrder.js"></script>
     <script type="text/javascript" src="scripts/script.js"></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -62,23 +63,59 @@
 
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                  <label class="input-group-text" for="select-ride">Choose Neighborhood</label>
+                  <label class="input-group-text" for="select-neighborhood">Choose Neighborhood</label>
                 </div>
                 <select class="custom-select" id="select-neighborhood"></select>
               </div>
+
+              <h5>Neighborhood :</h5>
+              <div class="custom-control custom-radio">
+                <input type="radio" id="radioExhaustive" name="customRadio" class="custom-control-input">
+                <label class="custom-control-label" for="radioExhaustive">Exhaustive</label>
+              </div>
+              <div class="custom-control custom-radio">
+                <input type="radio" id="customRadio2" name="customRadio" class="custom-control-input" checked>
+                <label class="custom-control-label" for="customRadio2">Non Exhaustive</label>
+              </div>
+
+              <button type="submit" class="btn btn-primary float-right" onclick="update()">Calculate</button>
+              <button type="submit" id="dwnButton" class="btn btn-success float-right mx-2" onclick="download('abc.txt', 'fghjikl')">Export .txt</button>
             </div>
           </div>
         </div>
       </div>
-      <h3>Solution score : <span id="score"></span></h3>
+      <div class="row m-2">
+        <div class="col-12 text-center">
+          <div id="spinner" class="spinner-border" role="status" style="display: none">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <p>Orders : <b id="nbOrders"></b></p>
+              <p>Score : <b id="before"></b></p>
+              <p>Score after Nearest neighbor : <b id="after"></b></p>
+              <p>Nearest neighbor iterations : <b id="iterations"></b></p>
+              <p>Process time : <b id="time"></b>ms</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-primary" role="alert">
+        ✅ Solution score : <b id="score"></b>
+      </div>
+
       <div class="row">
         <div class="col-5">
-          <h1>List</h1>
+          <h1>🗓 Schedule</h1>
           <div class="list-group" id="schedule"></div>
         </div>
         <div class="col-7">
-            <h1>Map</h1>
-          <div id="mapid" style="height: 300px"></div>
+            <h1>🗺 Map</h1>
+          <div id="mapid" style="height: 500px"></div>
         </div>
       </div>
     </div>

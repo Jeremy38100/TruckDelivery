@@ -1,7 +1,7 @@
 class Neighborhood {
   constructor(schedule) {
     this.schedule = schedule;
-    this.lastSchedule = schedule; // TODO copy object
+    this.lastSchedule = schedule.copy(); // TODO copy object
     this.nbOptimisation = 0;
   }
 
@@ -9,23 +9,43 @@ class Neighborhood {
   getNeighbours() {
   }
 
+  // Override
+  getABetterNeighbour(previousScore) {
+  }
+
   process() {
     const neighborhood = this.getNeighbours();
+    console.log('nbCombinations: ' + neighborhood.length);
+
     let minScore = this.lastSchedule.getScore();
     let minNeighbour = null;
 
     neighborhood.forEach(neighbour => {
       const score = neighbour.getScore();
-      console.log(score);
       if (score < minScore) {
         minScore = score;
         minNeighbour = neighbour;
       }
     });
+    console.log('minScore: ' + minScore);
     if (minNeighbour) {
       this.nbOptimisation++;
+      this.lastSchedule = minNeighbour;
       this.process();
+    } else {
+      console.log('end: ' + this.lastSchedule.getScore());
     }
-    else this.lastSchedule = minNeighbour;
+  }
+
+  process2() {
+    let betterSchedule = this.getABetterNeighbour(this.lastSchedule.getScore());
+    this.nbOptimisation = 0;
+    while (betterSchedule) {
+      this.lastSchedule = betterSchedule;
+      this.nbOptimisation++;
+      betterSchedule = this.getABetterNeighbour(this.lastSchedule.getScore());
+      $('#iterations').text(betterSchedule);
+    }
+    console.log('getBetter: ' + this.nbOptimisation);
   }
 }
