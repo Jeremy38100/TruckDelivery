@@ -27,10 +27,10 @@
     <script type="text/javascript" src="scripts/schedule/ride/MinDist.js"></script>
     <script type="text/javascript" src="scripts/schedule/ride/Random.js"></script>
     <script type="text/javascript" src="scripts/schedule/truckSchedule/TruckSchedule.js"></script>
-    <script type="text/javascript" src="scripts/neighborhood/Neighborhood.js"></script>
-    <script type="text/javascript" src="scripts/neighborhood/AddTruck.js"></script>
-    <script type="text/javascript" src="scripts/neighborhood/SwapOrder.js"></script>
-    <script type="text/javascript" src="scripts/neighborhood/SwapRandom.js"></script>
+    <script type="text/javascript" src="scripts/neighbourhood/Neighbourhood.js"></script>
+    <script type="text/javascript" src="scripts/neighbourhood/AddTruck.js"></script>
+    <script type="text/javascript" src="scripts/neighbourhood/SwapOrder.js"></script>
+    <script type="text/javascript" src="scripts/neighbourhood/SwapRandom.js"></script>
     <script type="text/javascript" src="scripts/script.js"></script>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -62,23 +62,23 @@
 
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                  <label class="input-group-text" for="select-neighborhood">Choose Neighborhood</label>
+                  <label class="input-group-text" for="select-neighbourhood">Choose Neighbourhood</label>
                 </div>
-                <select class="custom-select" id="select-neighborhood"></select>
+                <select class="custom-select" id="select-neighbourhood"></select>
               </div>
 
               <div class="alert alert-danger" role="alert">
-                  ⚠️ SwapOrderNeighborhood is glutton, do not try on huge dataset > 100
+                  ⚠️ SwapOrderNeighbourhood is glutton, do not try on huge dataset > 100
               </div>
 
-              <h5>Neighborhood :</h5>
+              <h5>Neighbourhood :</h5>
               <div class="custom-control custom-radio">
                 <input type="radio" id="radioExhaustive" name="customRadio" class="custom-control-input">
                 <label class="custom-control-label" for="radioExhaustive">Exhaustive</label>
               </div>
               <div class="custom-control custom-radio">
-                <input type="radio" id="customRadio2" name="customRadio" class="custom-control-input" checked>
-                <label class="custom-control-label" for="customRadio2">Non Exhaustive</label>
+                <input type="radio" id="radioNonExhaustive" name="customRadio" class="custom-control-input" checked>
+                <label class="custom-control-label" for="radioNonExhaustive">Non Exhaustive</label>
               </div>
 
               <button type="submit" class="btn btn-primary float-right" onclick="update()">Calculate</button>
@@ -100,8 +100,8 @@
             <div class="card-body">
               <p>Orders : <b id="nbOrders"></b></p>
               <p>Score : <b id="before"></b></p>
-              <p>Score after Nearest neighbor : <b id="after"></b></p>
-              <p>Nearest neighbor iterations : <b id="iterations"></b></p>
+              <p>Score after Nearest neighbour : <b id="after"></b></p>
+              <p>Nearest neighbour iterations : <b id="iterations"></b></p>
               <p>Process time : <b id="time"></b>ms</p>
             </div>
           </div>

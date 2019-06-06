@@ -1,6 +1,6 @@
 // The goal is to extract a Ride in each TruckSchedule
 // and add it to a new TruckSchedule
-class AddTruckNeighborhood extends Neighborhood {
+class AddTruckNeighbourhood extends Neighbourhood {
 
   constructor(schedule) { super(schedule); }
 

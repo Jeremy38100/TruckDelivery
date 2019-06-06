@@ -1,4 +1,4 @@
-class Neighborhood {
+class Neighbourhood {
   constructor(schedule) {
     this.schedule = schedule;
     this.lastSchedule = schedule.copy(); // TODO copy object
@@ -15,13 +15,13 @@ class Neighborhood {
 
   // exhaustive
   process() {
-    const neighborhood = this.getNeighbours();
-    console.log('nbCombinations: ' + neighborhood.length);
+    const neighbourhood = this.getNeighbours();
+    console.log('nbCombinations: ' + neighbourhood.length);
 
     let minScore = this.lastSchedule.getScore();
     let minNeighbour = null;
 
-    neighborhood.forEach(neighbour => {
+    neighbourhood.forEach(neighbour => {
       const score = neighbour.getScore();
       if (score < minScore) {
         minScore = score;

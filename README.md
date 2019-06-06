@@ -79,8 +79,8 @@ Fichier `.txt`
     * `map.js`
     * `script.js`
     * `utils.js`
-    * `/neighborhood` :
-      * `Neighborhood.js` : abstract class describing a Neighborhood process
+    * `/neighbourhood` :
+      * `Neighbourhood.js` : abstract class describing a Neighbourhood process
     * `/schedule`
       * `/ride`
         * `Ride.js` : abstract class describing a Ride

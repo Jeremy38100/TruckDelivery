@@ -1,5 +1,5 @@
 // The goal is to select two random orders in the schedule and swap them
-class SwapRandomNeighborhood extends Neighborhood {
+class SwapRandomNeighbourhood extends Neighbourhood {
 
   constructor(schedule) {
     super(schedule);

@@ -12,12 +12,12 @@ Constraints = {
 }
 
 const rides = [MinDistRide, RandomRide]; // IterativeRide
-const neighborhoods = [SwapOrderNeighborhood, SwapRandomNeighborhood, AddTruckNeighborhood];
+const neighbourhoods = [SwapOrderNeighbourhood, SwapRandomNeighbourhood, AddTruckNeighbourhood];
 datasets = [];
 
 let selectedDataset = null;
 let selectedRide = null;
-let selectedNeighborhood = null;
+let selectedNeighbourhood = null;
 
 let selectedSchedule = null;
 
@@ -31,13 +31,14 @@ function init() {
       .then(() => {
         console.log('ok');
         printRides();
-        printNeighborhoods();
+        printNeighbourhoods();
       }).catch(err => console.error(err));
 
     $('#select-dataset').change(update);
     $('#select-ride').change(update);
-    $('#select-neighborhood').change(update);
+    $('#select-neighbourhood').change(update);
     $('#radioExhaustive').change(update);
+    $('#radioNonExhaustive').change(update);
 
   }).catch();
 }
@@ -49,10 +50,10 @@ function printRides() {
   })
 }
 
-function printNeighborhoods() {
-  const neighborhoodsSelect = $('#select-neighborhood');
-  neighborhoods.forEach((neighborhood, index) => {
-    neighborhoodsSelect.append(`<option value="${index}">${neighborhood.name}</option>`);
+function printNeighbourhoods() {
+  const neighbourhoodsSelect = $('#select-neighbourhood');
+  neighbourhoods.forEach((neighbourhood, index) => {
+    neighbourhoodsSelect.append(`<option value="${index}">${neighbourhood.name}</option>`);
   })
 }
 
@@ -61,13 +62,13 @@ async function update() {
   await showSpinner();
   const dataset = $('#select-dataset').val();
   const ride = $('#select-ride').val();
-  const neighb = $('#select-neighborhood').val();
+  const neighb = $('#select-neighbourhood').val();
 
   selectedDataset = datasets.find(ex => ex.name == dataset);
   selectedRide = rides[Number(ride)];
-  selectedNeighborhood = neighborhoods[Number(neighb)];
-  if (!selectedDataset || !selectedRide || !selectedNeighborhood) {
-    console.error("dataset or ride or neighborhood not found");
+  selectedNeighbourhood = neighbourhoods[Number(neighb)];
+  if (!selectedDataset || !selectedRide || !selectedNeighbourhood) {
+    console.error("dataset or ride or neighbourhood not found");
     return -1;
   }
 
@@ -78,25 +79,25 @@ async function update() {
   selectedSchedule.drawOnMap();
   $('#before').text(selectedSchedule.getScore().toFixed(3));
 
-  let neighborhood = new selectedNeighborhood(selectedSchedule);
+  let neighbourhood = new selectedNeighbourhood(selectedSchedule);
   const isExhaustive = $('#radioExhaustive').prop('checked');
   if (isExhaustive) {
-    neighborhood.process();
+    neighbourhood.process();
   } else {
-    neighborhood.process2();
+    neighbourhood.process2();
   }
-  neighborhood.lastSchedule.displayHtml();
-  neighborhood.lastSchedule.drawOnMap();
-  $('#after').text(neighborhood.lastSchedule.getScore().toFixed(3));
-  $('#iterations').text(neighborhood.nbOptimisation);
+  neighbourhood.lastSchedule.displayHtml();
+  neighbourhood.lastSchedule.drawOnMap();
+  $('#after').text(neighbourhood.lastSchedule.getScore().toFixed(3));
+  $('#iterations').text(neighbourhood.nbOptimisation);
   $('#spinner').hide();
   $('#time').text(new Date() - startMs);
   lastFileName = $('#select-dataset').val()
-      + '_' + rides[$('#select-neighborhood').val()].name
-      + '_' + neighborhoods[ $('#select-neighborhood').val()].name
+      + '_' + rides[$('#select-neighbourhood').val()].name
+      + '_' + neighbourhoods[ $('#select-neighbourhood').val()].name
       + '_' + isExhaustive ? 'exhaustive' : 'non_exhaustive'
       + '.txt';
-  lastFileValue = neighborhood.lastSchedule.export();
+  lastFileValue = neighbourhood.lastSchedule.export();
   $('#dwnButton').show();
 }
 

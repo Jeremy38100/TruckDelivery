@@ -1,6 +1,6 @@
 // The goal is to try all orders permutations in the global schedule
 // ⚠️ Glutton
-class SwapOrderNeighborhood extends Neighborhood {
+class SwapOrderNeighbourhood extends Neighbourhood {
 
   constructor(schedule) { super(schedule); }
 
